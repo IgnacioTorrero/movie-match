@@ -1,0 +1,33 @@
+# 📂 Node.js
+node_modules/
+dist/
+coverage/
+
+# ⚙️ Configuración y logs
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.nyc_output/
+.vscode/
+.idea/
+.DS_Store
+
+# 🔄 Dependencias y caché
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# 🔄 Prisma (evita subir migraciones y caché)
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/
+
+# 🔄 Docker (si lo usas en el futuro)
+docker-compose.override.yml
