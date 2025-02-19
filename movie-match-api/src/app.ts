@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
+import movieRoutes from "./routes/movie.routes";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -13,5 +14,6 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
+app.use("/api", movieRoutes);
 
 export default app;
