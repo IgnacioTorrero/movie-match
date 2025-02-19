@@ -5,14 +5,21 @@ const router = Router();
 
 // Ruta para crear película
 router.post("/movies", async (req: Request, res: Response): Promise<void> => {
-  const { title, director, year, genre, synopsis } = req.body;
-  try {
-    const newMovie = await createMovie(title, director, year, genre, synopsis);
-    res.status(201).json(newMovie);
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
-  }
-});
+    const { title, director, year, genre, synopsis } = req.body;
+    
+    // ✅ Validación de entrada
+    if (!title || !director || !year || !genre) {
+      res.status(400).json({ error: "Missing required fields" });
+      return;
+    }
+  
+    try {
+      const newMovie = await createMovie(title, director, year, genre, synopsis);
+      res.status(201).json(newMovie);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });  
 
 // Ruta para obtener películas
 router.get("/movies", async (req: Request, res: Response): Promise<void> => {
