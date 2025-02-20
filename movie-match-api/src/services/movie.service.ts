@@ -22,13 +22,28 @@ export const getMovies = async () => {
 };
 
 // Obtener película por ID
-export const getMovieById = async (id: number) => {
-  return await prisma.movie.findUnique({
-    where: {
-      id,
+export const getMovieById = async (id: number, userId: number) => {
+  const movie = await prisma.movie.findUnique({
+    where: { id },
+    include: {
+      ratings: {  
+        where: { userId },
+        select: { score: true }
+      }
     },
   });
+
+  // Mostrar el rating del usuario
+  if (!movie) return null;
+  const userRating = movie.ratings.length > 0 ? movie.ratings[0].score : "No hay rate";
+  const { ratings, ...movieWithoutRatings } = movie;
+
+  return {
+    ...movieWithoutRatings,
+    userRating,
+  };
 };
+
 
 // Actualizar película
 export const updateMovie = async (id: number, title: string, director: string, year: number, genre: string, synopsis?: string) => {

@@ -35,15 +35,18 @@ router.get("/movies", authenticateToken, async (req: Request, res: Response): Pr
 // Ruta para obtener película por ID
 router.get("/movies/:id", authenticateToken, async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
+  const userId = (req as any).user.id;
+
   try {
-    const movie = await getMovieById(Number(id));
-    if (movie) {
-      res.status(200).json(movie);
-    } else {
+    const movie = await getMovieById(Number(id), userId);
+    if (!movie) {
       res.status(404).json({ error: "Movie not found" });
+      return;
     }
+
+    res.status(200).json(movie);
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
