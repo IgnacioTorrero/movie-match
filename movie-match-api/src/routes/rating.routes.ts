@@ -8,7 +8,7 @@ router.post("/rate", authenticateToken, async (req: Request, res: Response): Pro
   const { movieId, score } = req.body;
   const userId = (req as any).user.id;
 
-  if (!movieId || !score) {
+  if (!movieId || typeof score !== 'number') {
     res.status(400).json({ error: "Movie ID and score are required." });
     return;
   }

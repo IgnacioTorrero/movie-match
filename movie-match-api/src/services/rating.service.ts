@@ -17,13 +17,19 @@ export const rateMovie = async (userId: number, movieId: number, score: number) 
   });
 
   if (existingRating) {
-    return await prisma.rating.update({
-      where: { id: existingRating.id },
-      data: { score },
-    });
+    try {
+      return await prisma.rating.update({
+        where: { id: existingRating.id },
+        data: { score }
+      });
+    } catch (error) {
+      throw new Error("Error al actualizar la calificación.");
+    }
   }
-
-  return await prisma.rating.create({
+  
+  const result = await prisma.$transaction(async (prisma) => {
+    return await prisma.rating.create({
     data: { userId, movieId, score },
   });
-};
+
+})};
