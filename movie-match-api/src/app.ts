@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import path from "path";
 import movieRoutes from "./routes/movie.routes";
 import authRoutes from "./routes/auth.routes";
+import ratingRoutes from "./routes/rating.routes";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -17,5 +18,6 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api", movieRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/ratings", ratingRoutes);
 
 export default app;
