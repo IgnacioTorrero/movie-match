@@ -63,8 +63,12 @@ router.put("/movies/:id", authenticateToken, async (req: Request, res: Response)
 router.delete("/movies/:id", authenticateToken, async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
-    const deletedMovie = await deleteMovie(Number(id));
-    res.status(200).json(deletedMovie);
+    try {
+      const deletedMovie = await deleteMovie(Number(id));
+      res.status(200).json(deletedMovie);
+    } catch (error: any) {
+      res.status(500).json({ error: "Error deleting movie" });
+    }
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

@@ -3,12 +3,13 @@ import { registerUser, loginUser } from "../services/auth.service";
 
 const router = Router();
 
-// Registro
+// Registro de Usuario
 router.post("/register", async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!name || !email || !password) {
-    res.status(400).json({ error: "All fields are required" });
+  if (!name || !email || !password || !emailRegex.test(email)) {
+    res.status(400).json({ error: "All fields are required and email must be valid" });
     return;
   }
 
@@ -20,7 +21,7 @@ router.post("/register", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// Login
+// Login de Usuario
 router.post("/login", async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 

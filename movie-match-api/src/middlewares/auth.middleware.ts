@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const SECRET_KEY = process.env.JWT_SECRET || "abc123";
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) {
+  throw new Error("JWT_SECRET not set in environment variables");
+}
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.header("Authorization");
