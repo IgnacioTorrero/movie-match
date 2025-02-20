@@ -5,6 +5,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
 import movieRoutes from "./routes/movie.routes";
+import authRoutes from "./routes/auth.routes";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -15,5 +16,6 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api", movieRoutes);
+app.use("/api/auth", authRoutes);
 
 export default app;
