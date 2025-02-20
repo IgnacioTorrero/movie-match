@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express";
 import { createMovie, getMovies, getMovieById, updateMovie, deleteMovie } from "../services/movie.service";
+import { authenticateToken } from "../middlewares/auth.middleware";
 
 const router = Router();
 
 // Ruta para crear película
-router.post("/movies", async (req: Request, res: Response): Promise<void> => {
+router.post("/movies", authenticateToken, async (req: Request, res: Response): Promise<void> => {
     const { title, director, year, genre, synopsis } = req.body;
     
     // ✅ Validación de entrada
@@ -22,7 +23,7 @@ router.post("/movies", async (req: Request, res: Response): Promise<void> => {
   });  
 
 // Ruta para obtener películas
-router.get("/movies", async (req: Request, res: Response): Promise<void> => {
+router.get("/movies", authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
     const movies = await getMovies();
     res.status(200).json(movies);
@@ -32,7 +33,7 @@ router.get("/movies", async (req: Request, res: Response): Promise<void> => {
 });
 
 // Ruta para obtener película por ID
-router.get("/movies/:id", async (req: Request, res: Response): Promise<void> => {
+router.get("/movies/:id", authenticateToken, async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
     const movie = await getMovieById(Number(id));
@@ -47,19 +48,19 @@ router.get("/movies/:id", async (req: Request, res: Response): Promise<void> => 
 });
 
 // Ruta para actualizar película
-router.put("/movies/:id", async (req: Request, res: Response): Promise<void> => {
+router.put("/movies/:id", authenticateToken, async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const { title, director, year, genre, synopsis } = req.body;
   try {
     const updatedMovie = await updateMovie(Number(id), title, director, year, genre, synopsis);
     res.status(200).json(updatedMovie);
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    res.status(404).json({ error: "Movie not found" });
   }
 });
 
 // Ruta para eliminar película
-router.delete("/movies/:id", async (req: Request, res: Response): Promise<void> => {
+router.delete("/movies/:id", authenticateToken, async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
     const deletedMovie = await deleteMovie(Number(id));
