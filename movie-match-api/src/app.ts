@@ -7,6 +7,7 @@ import path from "path";
 import movieRoutes from "./routes/movie.routes";
 import authRoutes from "./routes/auth.routes";
 import ratingRoutes from "./routes/rating.routes";
+import recomendationRoutes from "./routes/recomendation.routes";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -19,5 +20,6 @@ app.use(morgan("dev"));
 app.use("/api", movieRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/ratings", ratingRoutes);
+app.use("/api/recommendations", recomendationRoutes);
 
 export default app;
