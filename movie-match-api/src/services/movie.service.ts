@@ -71,6 +71,6 @@ export const deleteMovie = async (id: number) => {
       });
   } catch (error: any) {
       console.error("Error en deleteMovie:", error);
-      throw new Error("Movie not found or has dependencies");
+      throw new Error("Movie not found");
   }
 };
