@@ -61,12 +61,16 @@ export const updateMovie = async (id: number, title: string, director: string, y
 
 // Eliminar película
 export const deleteMovie = async (id: number) => {
-    try {
-      return await prisma.movie.delete({
-        where: { id },
+  try {
+      await prisma.rating.deleteMany({
+          where: { movieId: id }
       });
-    } catch (error: any) {
-        throw new Error("Movie not found");
-      throw error;
-    }
-  };
+
+      return await prisma.movie.delete({
+          where: { id },
+      });
+  } catch (error: any) {
+      console.error("Error en deleteMovie:", error);
+      throw new Error("Movie not found");
+  }
+};
