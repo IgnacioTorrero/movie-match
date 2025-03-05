@@ -32,11 +32,11 @@ router.get("/movies", authenticateToken, async (req: Request, res: Response): Pr
     if (director) filters.director = { contains: director as string };
     if (year) filters.year = Number(year);
 
-    const pageNumber = Number(page);
-    const pageSize = Number(limit);
+    const pageNumber = Math.max(1, Number(page));
+    const pageSize = Math.max(1, Number(limit));
     const skip = (pageNumber - 1) * pageSize;
 
-    const movies = await getMovies(filters, pageSize, skip);
+    const movies = Object.keys(filters).length ? await getMovies(filters, pageSize, skip) : [];
     const totalMovies = await countMovies(filters);
 
     res.status(200).json({
