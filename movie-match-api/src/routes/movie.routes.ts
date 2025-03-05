@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { createMovie, getMovies, getMovieById, updateMovie, deleteMovie } from "../services/movie.service";
+import { createMovie, getMovies, getMovieById, updateMovie, deleteMovie, countMovies } from "../services/movie.service";
 import { authenticateToken } from "../middlewares/auth.middleware";
 
 const router = Router();
@@ -22,11 +22,29 @@ router.post("/movies", authenticateToken, async (req: Request, res: Response): P
     }
   });  
 
-// Ruta para obtener películas
+// Ruta para obtener películas con filtros y paginación
 router.get("/movies", authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    const movies = await getMovies();
-    res.status(200).json(movies);
+    const { genre, director, year, page = 1, limit = 5 } = req.query;
+
+    const filters: any = {};
+    if (genre) filters.genre = { contains: genre as string };
+    if (director) filters.director = { contains: director as string };
+    if (year) filters.year = Number(year);
+
+    const pageNumber = Number(page);
+    const pageSize = Number(limit);
+    const skip = (pageNumber - 1) * pageSize;
+
+    const movies = await getMovies(filters, pageSize, skip);
+    const totalMovies = await countMovies(filters);
+
+    res.status(200).json({
+      totalMovies,
+      totalPages: Math.ceil(totalMovies / pageSize),
+      currentPage: pageNumber,
+      movies,
+    });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
