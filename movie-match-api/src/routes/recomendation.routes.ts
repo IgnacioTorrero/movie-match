@@ -8,6 +8,10 @@ const router = Router();
 router.get("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = (req as any)?.user?.id;
+    if (!userId) {
+      res.status(400).json({ error: "User ID no proporcionado." });
+      return;
+    }
     const recommendations = await getRecommendedMovies(userId);
     res.status(200).json(recommendations);
   } catch (error: any) {

@@ -4,10 +4,16 @@ const prisma = new PrismaClient();
 
 // Algoritmo de recomendación basado en calificaciones del usuario
 export const getRecommendedMovies = async (userId: number) => {
-  const highRatedMovies = await prisma.rating.findMany({
-    where: { userId, score: { gte: 4 } },
-    include: { movie: true },
-  });
+  let highRatedMovies;
+  try {
+    highRatedMovies = await prisma.rating.findMany({
+      where: { userId, score: { gte: 4 } },
+      include: { movie: true },
+    });
+  } catch (error) {
+    console.error("Error al obtener calificaciones:", error);
+    throw new Error("Error al acceder a la base de datos.");
+  }
 
   if (highRatedMovies.length === 0) {
     return { message: "No hay suficientes datos para recomendar películas." };
@@ -47,5 +53,5 @@ export const getRecommendedMovies = async (userId: number) => {
     new Map(recommendedMovies.map((movie) => [movie.id, movie])).values()
   );
 
-  return uniqueRecommendations.slice(0, 5);
+  return uniqueRecommendations.length > 0 ? uniqueRecommendations.slice(0, 5) : [{ message: "No se encontraron recomendaciones." }];
 };
