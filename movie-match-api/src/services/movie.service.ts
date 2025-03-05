@@ -16,9 +16,31 @@ export const createMovie = async (title: string, director: string, year: number,
   return movie;
 };
 
-// Obtener películas
-export const getMovies = async () => {
-  return await prisma.movie.findMany();
+// Obtener películas con filtros y paginación
+export const getMovies = async (filters: any, take: number, skip: number) => {
+  try {
+    return await prisma.movie.findMany({
+      where: {
+        ...filters,
+        genre: filters.genre
+          ? {
+            genre: filters.genre ? { contains: filters.genre.contains.toLowerCase() } : undefined,
+            }
+          : undefined,
+      },
+      take,
+      skip,
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error: any) {
+    throw new Error(`Error fetching movies: ${error.message}`);
+  }
+  
+};
+
+// Contar el total de películas que cumplen los filtros
+export const countMovies = async (filters: any) => {
+  return await prisma.movie.count({ where: filters });
 };
 
 // Obtener película por ID
