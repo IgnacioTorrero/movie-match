@@ -8,6 +8,7 @@ import movieRoutes from "./routes/movie.routes";
 import authRoutes from "./routes/auth.routes";
 import ratingRoutes from "./routes/rating.routes";
 import recomendationRoutes from "./routes/recomendation.routes";
+import { errorHandler } from "./middlewares/error.middleware";
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
@@ -24,6 +25,7 @@ app.use("/api", movieRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/recommendations", recomendationRoutes);
+app.use(errorHandler);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;
