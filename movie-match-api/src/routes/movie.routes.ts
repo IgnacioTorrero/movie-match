@@ -1,21 +1,16 @@
 import { Router, Request, Response } from "express";
+import { validate } from "../middlewares/validate.middleware";
+import { movieSchema } from "../validations/movie.validation";
 import { createMovie, getMovies, getMovieById, updateMovie, deleteMovie, countMovies } from "../services/movie.service";
 import { authenticateToken } from "../middlewares/auth.middleware";
 
 const router = Router();
 
 // Ruta para crear película
-router.post("/movies", authenticateToken, async (req: Request, res: Response): Promise<void> => {
-    const { title, director, year, genre, synopsis } = req.body;
-    
-    // ✅ Validación de entrada
-    if (!title || !director || !year || !genre) {
-      res.status(400).json({ error: "Missing required fields" });
-      return;
-    }
-  
+router.post("/movies", authenticateToken, validate(movieSchema), async (req: Request, res: Response): Promise<void> => {
     try {
-      const newMovie = await createMovie(title, director, year, genre, synopsis);
+      const newMovie = await createMovie(req.body.title, req.body.director, req.body.year, 
+        req.body.genre, req.body.synopsis);
       res.status(201).json(newMovie);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
