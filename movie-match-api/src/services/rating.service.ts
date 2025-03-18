@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 export const rateMovie = async (userId: number, movieId: number, score: number) => {
   if (score < 1 || score > 5) {
@@ -27,9 +27,11 @@ export const rateMovie = async (userId: number, movieId: number, score: number) 
     }
   }
   
-  const result = await prisma.$transaction(async (prisma) => {
+  try {
     return await prisma.rating.create({
-    data: { userId, movieId, score },
-  });
-
-})};
+      data: { userId, movieId, score },
+    });
+  } catch (error) {
+    throw new Error("Error al crear la calificación.");
+  }
+};
