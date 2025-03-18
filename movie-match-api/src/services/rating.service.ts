@@ -27,7 +27,11 @@ export const rateMovie = async (userId: number, movieId: number, score: number) 
     }
   }
   
-  return await prisma.rating.create({
-    data: { userId, movieId, score },
-  });
+  try {
+    return await prisma.rating.create({
+      data: { userId, movieId, score },
+    });
+  } catch (error) {
+    throw new Error("Error al crear la calificación.");
+  }
 };

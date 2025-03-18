@@ -20,6 +20,8 @@ describe("Rating Service", () => {
       userId,
       movieId,
       score,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     } as any);
 
     const rating = await rateMovie(userId, movieId, score);
