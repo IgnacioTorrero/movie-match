@@ -31,7 +31,7 @@ router.get("/movies", authenticateToken, async (req: Request, res: Response): Pr
     const pageSize = Math.max(1, Number(limit));
     const skip = (pageNumber - 1) * pageSize;
 
-    const movies = Object.keys(filters).length ? await getMovies(filters, pageSize, skip) : [];
+    const movies = await getMovies(filters, pageSize, skip);
     const totalMovies = await countMovies(filters);
 
     res.status(200).json({

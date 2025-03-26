@@ -33,7 +33,7 @@ jest.mock("@prisma/client", () => {
                 year: 2010,
                 genre: "Sci-Fi",
                 synopsis: "A mind-bending thriller.",
-                ratings: [{ score: 5 }],
+                rating: [{ score: 5 }],
               }
             : null
         ),

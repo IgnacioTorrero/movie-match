@@ -33,7 +33,7 @@ export const getRecommendedMovies = async (userId: number) => {
   const topGenreMovies = await prisma.movie.findMany({
     where: {
       genre: { contains: favoriteGenre },
-      ratings: {
+      rating: {
         some: { score: { gte: 4 } },
       },
     },
@@ -42,7 +42,7 @@ export const getRecommendedMovies = async (userId: number) => {
   const otherHighRatedMovies = await prisma.movie.findMany({
     where: {
       genre: { not: { contains: favoriteGenre } },
-      ratings: {
+      rating: {
         some: { score: { gte: 4 } },
       },
     },

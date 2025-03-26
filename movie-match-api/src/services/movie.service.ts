@@ -11,6 +11,7 @@ export const createMovie = async (title: string, director: string, year: number,
       year,
       genre,
       synopsis,
+      updatedAt: new Date(),
     },
   });
   return movie;
@@ -48,7 +49,7 @@ export const getMovieById = async (id: number, userId: number) => {
   const movie = await prisma.movie.findUnique({
     where: { id },
     include: {
-      ratings: {  
+      rating: {  
         where: { userId },
         select: { score: true }
       }
@@ -57,8 +58,8 @@ export const getMovieById = async (id: number, userId: number) => {
 
   // Mostrar el rating del usuario
   if (!movie) return null;
-  const userRating = movie.ratings.length > 0 ? movie.ratings[0].score : "No hay rate";
-  const { ratings, ...movieWithoutRatings } = movie;
+  const userRating = movie.rating.length > 0 ? movie.rating[0].score : "No hay rate";
+  const { rating, ...movieWithoutRatings } = movie;
 
   return {
     ...movieWithoutRatings,
@@ -77,6 +78,7 @@ export const updateMovie = async (id: number, title: string, director: string, y
       year,
       genre,
       synopsis,
+      updatedAt: new Date(),
     },
   });
 };

@@ -14,6 +14,7 @@ export const registerUser = async (name: string, email: string, password: string
       name,
       email,
       password: hashedPassword,
+      updatedAt: new Date(), 
     },
   });
 
