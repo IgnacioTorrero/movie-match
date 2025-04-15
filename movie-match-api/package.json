@@ -34,6 +34,7 @@
   "scripts": {
     "dev": "nodemon",
     "test": "jest --detectOpenHandles --forceExit",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "build": "tsc"
   }
 }
