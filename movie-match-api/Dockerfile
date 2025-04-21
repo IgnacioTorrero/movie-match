@@ -1,17 +1,24 @@
+# Usa imagen liviana de Node
 FROM node:20-alpine
 
+# Define el directorio de trabajo
 WORKDIR /app
 
+# Copia y instala dependencias
 COPY package*.json ./
 RUN npm install
 
+# Copia todo el código
 COPY . .
-RUN npm install -g typescript && \
-    npm run build && \
-    chmod +x ./node_modules/.bin/prisma && \
-    ./node_modules/.bin/prisma generate
 
+# Compila el proyecto TypeScript
+RUN npm run build
+
+# Genera Prisma Client
+RUN npx prisma generate
+
+# Expone el puerto 3000 (usado internamente, luego se mapea a 3002 afuera)
 EXPOSE 3000
 
-# Ejecuta migraciones SOLO cuando arranca el contenedor, no antes
-CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node dist/server.js"]
+# Comando final: aplica migraciones y ejecuta la app compilada
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
