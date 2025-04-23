@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 // Mockeamos Prisma Client
 jest.mock("@prisma/client", () => {
+  const bcrypt = require("bcryptjs");
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
       user: {
