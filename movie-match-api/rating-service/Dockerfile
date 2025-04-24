@@ -2,18 +2,16 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copiamos dependencias y las instalamos
-COPY package*.json ./
+COPY rating-service/package*.json ./
 RUN npm install
 
-# Copiamos solo el código ya compilado y otros archivos necesarios
-COPY dist ./dist
+COPY rating-service/. ./
 COPY prisma ./prisma
-COPY .env .env
 
-# Generamos Prisma Client sin recompilar nada
-RUN npx prisma generate
+RUN npm run build && \
+    chmod +x ./node_modules/.bin/prisma && \
+    npx prisma generate --schema=./prisma/schema.prisma
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node dist/server.js"]

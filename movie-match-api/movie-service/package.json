@@ -34,8 +34,9 @@
   },
   "scripts": {
     "dev": "nodemon",
+    "prisma:generate": "prisma generate --schema=../../prisma/schema.prisma",
     "test": "jest --detectOpenHandles --forceExit",
     "test:watch": "jest --watch",
-    "build": "npx rimraf dist && tsc"
+    "build": "node_modules/.bin/rimraf dist && tsc"
   }
 }

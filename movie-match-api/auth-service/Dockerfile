@@ -2,16 +2,19 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY auth-service/package*.json ./
 RUN npm install
 
-COPY . .
+COPY auth-service/. ./
+COPY prisma ./prisma
+
 RUN npm install -g typescript && \
-    npm run build && \
+    npm install rimraf && \
+    npx rimraf dist && \
+    tsc && \
     chmod +x ./node_modules/.bin/prisma && \
-    ./node_modules/.bin/prisma generate
+    npx prisma generate --schema=./prisma/schema.prisma
 
 EXPOSE 3000
 
-# Ejecuta migraciones SOLO cuando arranca el contenedor, no antes
-CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node dist/server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node dist/server.js"]

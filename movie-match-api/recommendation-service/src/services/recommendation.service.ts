@@ -20,8 +20,8 @@ export const getRecommendedMovies = async (userId: number) => {
   }
 
   const genreCount: Record<string, number> = {};
-  highRatedMovies.forEach(({ movie }) => {
-    movie.genre.split("/").forEach((genre) => {
+  highRatedMovies.forEach(({ movie }: any) => {
+    (movie.genre as string).split("/").forEach((genre: string) => {
       genreCount[genre] = (genreCount[genre] || 0) + 1;
     });
   });

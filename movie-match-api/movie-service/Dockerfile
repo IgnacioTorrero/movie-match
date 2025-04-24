@@ -2,18 +2,20 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copiamos dependencias y las instalamos
-COPY package*.json ./
+COPY movie-service/package*.json ./
 RUN npm install
 
-# Copiamos solo el código ya compilado y otros archivos necesarios
-COPY dist ./dist
+COPY movie-service/. ./
 COPY prisma ./prisma
-COPY .env .env
 
-# Generamos Prisma Client sin recompilar nada
-RUN npx prisma generate
+RUN npm install -g typescript && \
+    npm install rimraf && \
+    chmod +x ./node_modules/.bin/rimraf && \
+    ./node_modules/.bin/rimraf dist && \
+    tsc && \
+    chmod +x ./node_modules/.bin/prisma && \
+    npx prisma generate --schema=./prisma/schema.prisma
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node dist/server.js"]
