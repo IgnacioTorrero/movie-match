@@ -25,7 +25,8 @@ export const getMovies = async (filters: any, take: number, skip: number) => {
         ...filters,
         genre: filters.genre
           ? {
-            genre: filters.genre ? { contains: filters.genre.contains.toLowerCase() } : undefined,
+            contains: filters.genre.toLowerCase(),
+            mode: "insensitive"
             }
           : undefined,
       },
