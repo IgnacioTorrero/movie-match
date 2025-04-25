@@ -7,6 +7,10 @@ export const rateMovie = async (userId: number, movieId: number, score: number) 
     throw new Error("La calificación debe estar entre 1 y 5 estrellas.");
   }
 
+  if (!userId || !movieId) {
+    throw new Error("El ID de usuario y el ID de película son requeridos.");
+  }
+  
   const movie = await prisma.movie.findUnique({ where: { id: movieId } });
   if (!movie) {
     throw new Error("La película no existe.");

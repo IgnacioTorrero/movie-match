@@ -4,17 +4,21 @@ const prisma = new PrismaClient();
 
 // Crear película
 export const createMovie = async (title: string, director: string, year: number, genre: string, synopsis?: string) => {
-  const movie = await prisma.movie.create({
-    data: {
-      title,
-      director,
-      year,
-      genre,
-      synopsis,
-      updatedAt: new Date(),
-    },
-  });
-  return movie;
+  try {
+    const movie = await prisma.movie.create({
+      data: {
+        title,
+        director,
+        year,
+        genre,
+        synopsis,
+        updatedAt: new Date(),
+      },
+    });
+    return movie;
+  } catch (error: any) {
+    throw new Error(`Error al crear la película: ${(error as any).message}`);
+  }  
 };
 
 // Obtener películas con filtros y paginación

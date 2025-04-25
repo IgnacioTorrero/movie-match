@@ -15,7 +15,7 @@ router.post("/movies", authenticateToken, validate(movieSchema), async (req: Req
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
-  });  
+});  
 
 // Ruta para obtener películas con filtros y paginación
 router.get("/movies", authenticateToken, async (req: Request, res: Response): Promise<void> => {
