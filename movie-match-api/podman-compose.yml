@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  db:
+  mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: mysql-shared
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -13,18 +13,61 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
-  api:
-    build: .
-    container_name: movie-api
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    container_name: auth-service
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql://root:root@db:3306/proyecto_node
-      JWT_SECRET: ${JWT_SECRET}
-      NODE_ENV: production
+      DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
+      JWT_SECRET: abc123
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
-      - db
+      - mysql
+
+  movie-service:
+    build:
+      context: .
+      dockerfile: movie-service/Dockerfile
+    container_name: movie-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
+      JWT_SECRET: abc123
+    ports:
+      - "3002:3000"
+    depends_on:
+      - mysql
+
+  rating-service:
+    build:
+      context: .
+      dockerfile: rating-service/Dockerfile
+    container_name: rating-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
+      JWT_SECRET: abc123
+    ports:
+      - "3003:3000"
+    depends_on:
+      - mysql
+
+  recommendation-service:
+    build:
+      context: .
+      dockerfile: recommendation-service/Dockerfile
+    container_name: recommendation-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
+      JWT_SECRET: abc123
+    ports:
+      - "3004:3000"
+    depends_on:
+      - mysql
 
 volumes:
   db_data:
