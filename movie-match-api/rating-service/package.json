@@ -37,6 +37,8 @@
     "test": "jest --detectOpenHandles --forceExit",
     "prisma:generate": "prisma generate --schema=../../prisma/schema.prisma",
     "test:watch": "jest --watch",
+    "test:unit": "jest --config=jest.unit.config.ts",
+    "test:integration": "jest --config=jest.config.ts",
     "build": "npx tsc"
   }
 }

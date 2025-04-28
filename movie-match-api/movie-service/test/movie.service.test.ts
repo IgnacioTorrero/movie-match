@@ -1,6 +1,6 @@
 import { createMovie, getMovies, countMovies, getMovieById, updateMovie, deleteMovie } from "../src/services/movie.service";
 
-// Mockeamos Prisma Client
+// Mock Prisma Client
 jest.mock("@prisma/client", () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
@@ -53,11 +53,6 @@ jest.mock("@prisma/client", () => {
     })),
   };
 });
-
-// Importamos Prisma después de mockearlo
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 describe("Movie Service", () => {
   test("Debe crear una película correctamente", async () => {

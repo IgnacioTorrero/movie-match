@@ -1,3 +1,19 @@
+// Mock Prisma Client
+jest.mock("@prisma/client", () => {
+  return {
+    PrismaClient: jest.fn().mockImplementation(() => ({
+      movie: {
+        findUnique: jest.fn(),
+      },
+      rating: {
+        findFirst: jest.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+      },
+    })),
+  };
+});
+
 import { rateMovie, prisma } from "../src/services/rating.service";
 import { jest } from "@jest/globals";
 
@@ -11,18 +27,16 @@ describe("Rating Service", () => {
     const movieId = 1;
     const score = 4;
 
-    jest.spyOn(prisma.movie, "findUnique").mockResolvedValue({ id: movieId } as any);
-    jest.spyOn(prisma.rating, "findFirst").mockResolvedValue(null);
-
-    // 🔹 Mockeamos `prisma.rating.create` sin `$transaction`
-    jest.spyOn(prisma.rating, "create").mockResolvedValue({
+    (prisma.movie.findUnique as jest.MockedFunction<(...args: any[]) => any>).mockResolvedValue({ id: movieId });
+    (prisma.rating.findFirst as jest.MockedFunction<(...args: any[]) => any>).mockResolvedValue(null);
+    (prisma.rating.create as jest.MockedFunction<(...args: any[]) => any>).mockResolvedValue({
       id: 1,
       userId,
       movieId,
       score,
       createdAt: new Date(),
       updatedAt: new Date(),
-    } as any);
+    });
 
     const rating = await rateMovie(userId, movieId, score);
 
@@ -37,14 +51,14 @@ describe("Rating Service", () => {
     const movieId = 1;
     const newScore = 5;
 
-    jest.spyOn(prisma.movie, "findUnique").mockResolvedValue({ id: movieId } as any);
-    jest.spyOn(prisma.rating, "findFirst").mockResolvedValue({ id: 10, userId, movieId, score: 3 } as any);
-    jest.spyOn(prisma.rating, "update").mockResolvedValue({
+    (prisma.movie.findUnique as jest.MockedFunction<(...args: any[]) => any>).mockResolvedValue({ id: movieId });
+    (prisma.rating.findFirst as jest.MockedFunction<(...args: any[]) => any>).mockResolvedValue({ id: 10, userId, movieId, score: 3 });
+    (prisma.rating.update as jest.MockedFunction<(...args: any[]) => any>).mockResolvedValue({
       id: 10,
       userId,
       movieId,
       score: newScore,
-    } as any);
+    });
 
     const updatedRating = await rateMovie(userId, movieId, newScore);
 
@@ -53,9 +67,10 @@ describe("Rating Service", () => {
   });
 
   test("Debe fallar si la película no existe", async () => {
-    jest.spyOn(prisma.movie, "findUnique").mockResolvedValue(null);
+    (prisma.movie.findUnique as jest.MockedFunction<(...args: any[]) => any>).mockResolvedValue(null);
+  
     await expect(rateMovie(1, 99, 3)).rejects.toThrow("La película no existe.");
-  });
+  });  
 
   test("Debe fallar si la calificación es menor a 1 o mayor a 5", async () => {
     await expect(rateMovie(1, 1, 0)).rejects.toThrow("La calificación debe estar entre 1 y 5 estrellas.");
