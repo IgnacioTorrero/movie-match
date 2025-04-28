@@ -39,6 +39,8 @@
     "prisma:generate": "prisma generate --schema=../../prisma/schema.prisma",
     "test": "jest --detectOpenHandles --forceExit",
     "test:watch": "jest --watch",
+    "test:unit": "jest --config=jest.unit.config.ts",
+    "test:integration": "jest --config=jest.config.ts",
     "build": "node_modules/.bin/rimraf dist && tsc"
   }
 }

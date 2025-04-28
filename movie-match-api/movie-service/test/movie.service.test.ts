@@ -55,9 +55,9 @@ jest.mock("@prisma/client", () => {
 });
 
 // Importamos Prisma después de mockearlo
-import { PrismaClient } from "@prisma/client";
+//import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 
 describe("Movie Service", () => {
   test("Debe crear una película correctamente", async () => {

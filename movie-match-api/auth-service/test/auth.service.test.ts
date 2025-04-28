@@ -31,9 +31,9 @@ jest.mock("@prisma/client", () => {
   };
 });
 
-import { PrismaClient } from "@prisma/client";
+//import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 
 describe("Auth Service", () => {
   test("Debe registrar un usuario correctamente", async () => {
