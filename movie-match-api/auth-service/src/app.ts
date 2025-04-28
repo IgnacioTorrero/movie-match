@@ -21,7 +21,9 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use(errorHandler);
-app.use(userRoutes);
+if (userRoutes) {
+  app.use(userRoutes);
+}
 //app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;

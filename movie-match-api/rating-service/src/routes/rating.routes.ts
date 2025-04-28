@@ -21,7 +21,7 @@ router.post("/rate", authenticateToken, validate(ratingSchema), async (req: Requ
     return;
   }
 
-  if (!(await validateUser(userId))) {
+  if (!userId || isNaN(userId) || !(await validateUser(userId))) {
     res.status(400).json({ error: "El usuario no existe o es inválido." });
     return;
   }

@@ -4,7 +4,7 @@ const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://auth-service:30
 
 export async function validateUser(userId: number): Promise<boolean> {
   try {
-    const response = await axios.get(`${AUTH_SERVICE_URL}/api/users/${userId}`);
+    const response = await axios.get(`${AUTH_SERVICE_URL}/api/users/${userId}`, { timeout: 5000 });
     return response.status === 200;
   } catch (error) {
     return false; // 404 o error de red

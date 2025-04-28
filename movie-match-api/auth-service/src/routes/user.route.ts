@@ -6,8 +6,15 @@ const prisma = new PrismaClient();
 
 router.get('/api/users/:id', async (req: Request, res: Response): Promise<void> => {
     try {
+      const userId = parseInt(req.params.id);
+
+      if (isNaN(userId)) {
+        res.status(400).json({ message: 'ID inválido' });
+        return;
+      }
+
       const user = await prisma.user.findUnique({
-        where: { id: parseInt(req.params.id) },
+        where: { id: userId },
         select: { id: true, email: true },
       });
   
