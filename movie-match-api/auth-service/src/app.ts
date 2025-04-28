@@ -5,9 +5,10 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
 import authRoutes from "./routes/auth.routes";
+import userRoutes from './routes/user.route'; // ruta donde agregaste el GET /api/users/:id
 import { errorHandler } from "./middlewares/error.middleware";
 //import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
+//import YAML from 'yamljs';
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -20,6 +21,9 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use(errorHandler);
+if (userRoutes) {
+  app.use(userRoutes);
+}
 //app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;

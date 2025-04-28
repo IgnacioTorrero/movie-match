@@ -2,6 +2,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+ENV PRISMA_CLI_QUERY_ENGINE_TYPE="binary"
+
 COPY movie-service/package*.json ./
 RUN npm install
 

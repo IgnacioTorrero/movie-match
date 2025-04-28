@@ -3,6 +3,7 @@ import { validate } from "../middlewares/validate.middleware";
 import { ratingSchema } from "../validations/rate.validation";
 import { rateMovie } from "../services/rating.service";
 import { authenticateToken } from "../middlewares/auth.middleware";
+import { validateUser } from "../utils/validateUser";
 
 const router = Router();
 
@@ -17,6 +18,11 @@ router.post("/rate", authenticateToken, validate(ratingSchema), async (req: Requ
 
   if (!movieId || typeof score !== 'number') {
     res.status(400).json({ error: "Movie ID and score are required." });
+    return;
+  }
+
+  if (!userId || isNaN(userId) || !(await validateUser(userId))) {
+    res.status(400).json({ error: "El usuario no existe o es inválido." });
     return;
   }
 
