@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Auth Service API
+  description: API para la autenticación de usuarios (registro e inicio de sesión).
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api/auth
+    description: Servidor local para el auth-service
+paths:
+  /register:
+    post:
+      summary: Registro de usuario
+      description: Registra un nuevo usuario en el sistema.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "johndoe@example.com"
+                password:
+                  type: string
+                  example: "Securepassword123*"
+      responses:
+        '201':
+          description: Usuario registrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "John Doe"
+                  email:
+                    type: string
+                    example: "johndoe@example.com"
+        '400':
+          description: Datos inválidos
+        '500':
+          description: Error interno del servidor
+
+  /login:
+    post:
+      summary: Inicio de sesión
+      description: Inicia sesión con las credenciales del usuario y genera un token JWT.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "johndoe@example.com"
+                password:
+                  type: string
+                  example: "Securepassword123*"
+      responses:
+        '200':
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "JWT-TOKEN-HERE"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: "johndoe@example.com"
+        '401':
+          description: Credenciales incorrectas
+        '400':
+          description: Datos inválidos
+        '500':
+          description: Error interno del servidor
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

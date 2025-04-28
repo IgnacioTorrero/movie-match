@@ -10,6 +10,8 @@ RUN npm install
 COPY movie-service/. ./
 COPY prisma ./prisma
 
+COPY movie-service/swagger/swagger.yaml /app/swagger.yaml
+
 RUN npm install -g typescript && \
     npm install rimraf && \
     chmod +x ./node_modules/.bin/rimraf && \

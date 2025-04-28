@@ -10,6 +10,8 @@ RUN npm install
 COPY auth-service/. ./
 COPY prisma ./prisma
 
+COPY auth-service/swagger/swagger.yaml /app/swagger.yaml
+
 RUN npm install -g typescript && \
     npm install rimraf && \
     npx rimraf dist && \

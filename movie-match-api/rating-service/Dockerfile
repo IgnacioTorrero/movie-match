@@ -12,6 +12,8 @@ RUN npm install -g typescript
 COPY rating-service/. ./
 COPY prisma ./prisma
 
+COPY rating-service/swagger/swagger.yaml /app/swagger.yaml
+
 RUN chmod +x ./node_modules/.bin/prisma
 
 RUN rm -rf dist && \
