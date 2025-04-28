@@ -2,7 +2,7 @@ import { registerUser, loginUser } from "../src/services/auth.service";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Mockeamos Prisma Client
+// Mock Prisma Client
 jest.mock("@prisma/client", () => {
   const bcrypt = require("bcryptjs");
   return {
@@ -30,10 +30,6 @@ jest.mock("@prisma/client", () => {
     })),
   };
 });
-
-//import { PrismaClient } from "@prisma/client";
-
-//const prisma = new PrismaClient();
 
 describe("Auth Service", () => {
   test("Debe registrar un usuario correctamente", async () => {

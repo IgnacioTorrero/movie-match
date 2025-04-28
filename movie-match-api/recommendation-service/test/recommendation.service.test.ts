@@ -1,4 +1,4 @@
-// 🔥 Mockeamos PrismaClient completo ANTES de cualquier import
+// Mock Prisma Client
 jest.mock("@prisma/client", () => {
   const ratingFindManyMock = jest.fn();
   const movieFindManyMock = jest.fn();
@@ -14,16 +14,14 @@ jest.mock("@prisma/client", () => {
       $use: jest.fn(),
       $executeRaw: jest.fn(),
       $queryRaw: jest.fn(),
-      __MOCS__: { ratingFindManyMock, movieFindManyMock }, // <--- exportamos los mocks reales
+      __MOCS__: { ratingFindManyMock, movieFindManyMock },
     })),
   };
 });
 
-// 🔥 Luego importamos lo demás
 import { getRecommendedMovies } from "../src/services/recommendation.service";
 import { jest } from "@jest/globals";
 
-// Obtenemos el PrismaClient mockeado y accedemos a los mocks reales
 const { PrismaClient } = jest.requireMock("@prisma/client") as any;
 const prismaInstance = new PrismaClient();
 const { ratingFindManyMock, movieFindManyMock } = prismaInstance.__MOCS__;

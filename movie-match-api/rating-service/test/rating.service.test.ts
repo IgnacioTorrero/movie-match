@@ -1,4 +1,4 @@
-// Mockeamos Prisma primero
+// Mock Prisma Client
 jest.mock("@prisma/client", () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
