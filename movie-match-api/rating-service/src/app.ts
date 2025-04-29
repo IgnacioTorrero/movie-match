@@ -12,25 +12,14 @@ import YAML from "yamljs";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
-
-// Swagger
-let swaggerDocument: any;
-try {
-  swaggerDocument = YAML.load(path.join(__dirname, "../swagger.yaml"));
-} catch (e) {
-  console.warn("No Swagger YAML found or invalid path.");
-}
+const swaggerDocument = YAML.load(path.resolve(__dirname, "../swagger.yaml"));
 
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
-
 app.use("/api/ratings", ratingRoutes);
-
-if (swaggerDocument) {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-}
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(errorHandler);
 

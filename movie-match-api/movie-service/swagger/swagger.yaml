@@ -1,0 +1,271 @@
+openapi: 3.0.0
+info:
+  title: Movie Service API
+  description: API para gestionar películas (crear, leer, actualizar, eliminar).
+  version: 1.0.0
+servers:
+  - url: http://localhost:3002/api
+    description: Servidor local para el movie-service
+paths:
+  /movies:
+    post:
+      summary: Crear una nueva película
+      description: Crea una nueva película en el sistema.
+      operationId: createMovie
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - director
+                - year
+                - genre
+                - synopsis
+              properties:
+                title:
+                  type: string
+                  example: "Inception"
+                director:
+                  type: string
+                  example: "Christopher Nolan"
+                year:
+                  type: integer
+                  example: 2010
+                genre:
+                  type: string
+                  example: "Sci-Fi"
+                synopsis:
+                  type: string
+                  example: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
+      responses:
+        '201':
+          description: Película creada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  title:
+                    type: string
+                    example: "Inception"
+                  director:
+                    type: string
+                    example: "Christopher Nolan"
+                  year:
+                    type: integer
+                    example: 2010
+                  genre:
+                    type: string
+                    example: "Sci-Fi"
+                  synopsis:
+                    type: string
+                    example: "A thief who steals corporate secrets..."
+        '400':
+          description: Datos inválidos
+
+  /movies:
+    get:
+      summary: Obtener todas las películas con filtros y paginación
+      description: Obtiene una lista de películas filtradas por género, director, año, etc.
+      operationId: getMovies
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: genre
+          in: query
+          schema:
+            type: string
+          description: Filtro por género
+        - name: director
+          in: query
+          schema:
+            type: string
+          description: Filtro por director
+        - name: year
+          in: query
+          schema:
+            type: integer
+          description: Filtro por año
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Número de página para paginación
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 5
+          description: Número de resultados por página
+      responses:
+        '200':
+          description: Lista de películas con filtros y paginación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalMovies:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 20
+                  currentPage:
+                    type: integer
+                    example: 1
+                  movies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "Inception"
+                        director:
+                          type: string
+                          example: "Christopher Nolan"
+                        year:
+                          type: integer
+                          example: 2010
+                        genre:
+                          type: string
+                          example: "Sci-Fi"
+                        synopsis:
+                          type: string
+                          example: "A thief who steals corporate secrets..."
+        '400':
+          description: Error en la solicitud
+
+  /movies/{id}:
+    get:
+      summary: Obtener una película por ID
+      description: Obtiene los detalles de una película por su ID.
+      operationId: getMovieById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de la película
+      responses:
+        '200':
+          description: Película obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  title:
+                    type: string
+                    example: "Inception"
+                  director:
+                    type: string
+                    example: "Christopher Nolan"
+                  year:
+                    type: integer
+                    example: 2010
+                  genre:
+                    type: string
+                    example: "Sci-Fi"
+                  synopsis:
+                    type: string
+                    example: "A thief who steals corporate secrets..."
+        '404':
+          description: Película no encontrada
+
+  /movies/{id}:
+    put:
+      summary: Actualizar una película
+      description: Actualiza la información de una película existente.
+      operationId: updateMovie
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de la película
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - director
+                - year
+                - genre
+                - synopsis
+              properties:
+                title:
+                  type: string
+                  example: "Inception"
+                director:
+                  type: string
+                  example: "Christopher Nolan"
+                year:
+                  type: integer
+                  example: 2010
+                genre:
+                  type: string
+                  example: "Sci-Fi"
+                synopsis:
+                  type: string
+                  example: "A thief who steals corporate secrets..."
+      responses:
+        '200':
+          description: Película actualizada con éxito
+        '404':
+          description: Película no encontrada
+        '400':
+          description: Datos inválidos
+
+  /movies/{id}:
+    delete:
+      summary: Eliminar una película
+      description: Elimina una película por su ID.
+      operationId: deleteMovie
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID de la película
+      responses:
+        '200':
+          description: Película eliminada con éxito
+        '404':
+          description: Película no encontrada
+        '500':
+          description: Error al eliminar la película
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

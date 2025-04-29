@@ -10,6 +10,8 @@ RUN npm install
 COPY recommendation-service/. ./
 COPY prisma ./prisma
 
+COPY recommendation-service/swagger/swagger.yaml /app/swagger.yaml
+
 RUN npm run build && \
     chmod +x ./node_modules/.bin/prisma && \
     npx prisma generate --schema=./prisma/schema.prisma

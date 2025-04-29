@@ -5,15 +5,15 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
 import authRoutes from "./routes/auth.routes";
-import userRoutes from './routes/user.route'; // ruta donde agregaste el GET /api/users/:id
+import userRoutes from './routes/user.route';
 import { errorHandler } from "./middlewares/error.middleware";
-//import swaggerUi from 'swagger-ui-express';
-//import YAML from 'yamljs';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
-//const swaggerDocument = YAML.load(path.join(__dirname, '../swagger.yaml'));
+const swaggerDocument = YAML.load(path.resolve(__dirname, "../swagger.yaml"));
 
 app.use(express.json());
 app.use(cors());
@@ -24,6 +24,6 @@ app.use(errorHandler);
 if (userRoutes) {
   app.use(userRoutes);
 }
-//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;

@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: Recommendation Service API
+  description: API para obtener recomendaciones de películas basadas en el historial del usuario.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3004/api
+    description: Servidor local para el recommendation-service
+paths:
+  /recommendations:
+    get:
+      summary: Obtener recomendaciones de películas
+      description: Devuelve una lista de películas recomendadas basadas en el historial y preferencias del usuario.
+      operationId: getRecommendedMovies
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de películas recomendadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    title:
+                      type: string
+                      example: "Inception"
+                    director:
+                      type: string
+                      example: "Christopher Nolan"
+                    year:
+                      type: integer
+                      example: 2010
+                    genre:
+                      type: string
+                      example: "Sci-Fi"
+                    synopsis:
+                      type: string
+                      example: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
+        '400':
+          description: Usuario no autenticado o ID de usuario no proporcionado
+        '500':
+          description: Error al obtener recomendaciones
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
