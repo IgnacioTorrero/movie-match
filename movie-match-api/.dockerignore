@@ -1,0 +1,21 @@
+# Ignorar node_modules y dist en todos los servicios
+**/node_modules
+**/dist
+
+# Ignorar lockfiles locales
+**/package-lock.json
+**/yarn.lock
+
+# Ignorar tests y archivos de desarrollo
+**/*.test.*
+**/*.spec.*
+**/*.log
+**/.env
+**/.env.*  
+**/.vscode
+**/.idea
+
+# Ignorar frontend temporalmente si lo construís aparte
+auth-service/front-end/node_modules
+auth-service/front-end/dist
+auth-service/front-end/package-lock.json
