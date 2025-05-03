@@ -5,10 +5,10 @@ export default function Login() {
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [token, setToken] = useState('');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<{ email: string } | null>(null);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginForm({ ...loginForm, [e.target.name]: e.target.value });
   };
 
@@ -40,9 +40,16 @@ export default function Login() {
       setToken(data.token);
       setUser(data.user);
       setError('');
-    } catch (err) {
-      setError(err.message);
-    }
+
+      // Redireccionamiento a pagina principal
+      navigate("http://localhost:8082/");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Error desconocido');
+      }
+    }    
   };
 
   return (

@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<{ email: string } | null>(null);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -21,19 +21,23 @@ export default function Register() {
       const data = await res.json();
       if (!res.ok) {
         const errMsg = Array.isArray(data.error)
-          ? data.error.map((e) => e.message).join(', ')
+          ? data.error.map((e: any) => e.message).join(', ')
           : data.error || 'Error';
         throw new Error(errMsg);
       }      
       setUser(data);
       setError('');
-    } catch (err) {
-      if (err?.message?.includes('[object')) {
-        setError('Error de validación. Verificá los campos ingresados.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        if (err.message.includes('[object')) {
+          setError('Error de validación. Verificá los campos ingresados.');
+        } else {
+          setError(err.message);
+        }
       } else {
-        setError(err.message);
+        setError('Error desconocido');
       }
-    }    
+    }      
   };
 
   return (

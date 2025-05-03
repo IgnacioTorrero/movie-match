@@ -1,4 +1,4 @@
-# Frontend Dockerfile (auth-service/front-end/Dockerfile)
+# Frontend Dockerfile (movie-service/front-end/Dockerfile)
 FROM node:20-alpine AS builder
 
 WORKDIR /app
