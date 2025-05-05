@@ -34,7 +34,7 @@ export default function Login() {
       if (!res.ok) throw new Error(data.error || 'Error');
 
       // Almacenamiento de Token para endpoints protegidos
-      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('token', data.token);
       localStorage.setItem('userEmail', data.user.email);
 
       setToken(data.token);
@@ -42,7 +42,7 @@ export default function Login() {
       setError('');
 
       // Redireccionamiento a pagina principal
-      navigate("http://localhost:8082/");
+      window.location.href = `http://localhost:8082/?token=${data.token}`;
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
