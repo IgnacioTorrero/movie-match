@@ -51,22 +51,30 @@ const Home = () => {
     fetchMovies();
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "http://localhost:8081/login";
+  };  
+
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-gray-100 px-4 py-8 flex justify-center items-start">
+      <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md">
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">🎬 Películas</h1>
+          <div className="flex space-x-4 items-center">
+            <h1 className="text-3xl font-bold text-gray-800">🎬 Películas</h1>
+            <a href="/" className="text-blue-600 hover:underline">Inicio</a>
+            <a href="/create" className="text-blue-600 hover:underline">Crear película</a>
+          </div>
           <button
-            onClick={() => {
-              localStorage.clear();
-              window.location.href = "http://localhost:8081/login";
-            }}
+            onClick={handleLogout}
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
           >
             Cerrar sesión
           </button>
         </div>
-  
+
+        {/* Filtros */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <input
             type="text"
@@ -96,15 +104,18 @@ const Home = () => {
             Buscar
           </button>
         </div>
-  
+
+        {/* Error */}
         {error && <p className="text-red-600 mb-4">{error}</p>}
-  
+
+        {/* Lista de películas */}
         <div className="grid gap-4 mb-6">
           {movies.map((movie: any) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>
-  
+
+        {/* Paginación */}
         <div className="flex justify-center items-center space-x-4">
           <button
             className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
@@ -126,7 +137,7 @@ const Home = () => {
         </div>
       </div>
     </div>
-  );  
+  );
 };
 
 export default Home;
