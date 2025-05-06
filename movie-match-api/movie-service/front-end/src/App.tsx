@@ -13,7 +13,7 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 function App() {
   return (
     <Router>
-      <div>
+      <div className="min-h-screen bg-gray-100 overflow-x-hidden">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />

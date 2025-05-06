@@ -57,22 +57,11 @@ const Home = () => {
   };  
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-8 flex justify-center items-start">
-      <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex space-x-4 items-center">
-            <h1 className="text-3xl font-bold text-gray-800">🎬 Películas</h1>
-            <a href="/" className="text-blue-600 hover:underline">Inicio</a>
-            <a href="/create" className="text-blue-600 hover:underline">Crear película</a>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-          >
-            Cerrar sesión
-          </button>
-        </div>
+    <div className="min-h-screen bg-gray-100 flex justify-center px-4 overflow-x-hidden">
+      <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md mt-10">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          🎬 Películas
+        </h1>
 
         {/* Filtros */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
