@@ -1,21 +1,29 @@
 // src/components/Navbar.tsx
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { removeToken } from "../auth";
 
 const Navbar = () => {
-  const navigate = useNavigate();
-
   const handleLogout = () => {
     removeToken();
     localStorage.removeItem("userEmail");
-    navigate("http://localhost:8081/"); // Redirige al login
-  };
+    window.location.href = "http://localhost:8081/";
+  };  
 
   return (
     <nav className="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow">
-      <div className="flex items-center space-x-4">
-        <Link to="/" className="hover:text-gray-300">Inicio</Link>
-        <Link to="/create" className="hover:text-gray-300">Crear película</Link>
+      <div className="flex items-center space-x-2">
+        <Link
+          to="/"
+          className="text-white hover:text-purple-400 transition-colors"
+        >
+          Inicio
+        </Link>
+        <Link
+          to="/create"
+          className="text-white hover:text-purple-400 transition-colors ml-3"
+        >
+          Crear película
+        </Link>
       </div>
       <button
         onClick={handleLogout}

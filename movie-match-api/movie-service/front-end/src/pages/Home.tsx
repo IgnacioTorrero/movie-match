@@ -1,5 +1,6 @@
 // src/pages/Home.tsx
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../api";
 import MovieCard from "../components/MovieCard";
 
@@ -14,23 +15,37 @@ const Home = () => {
 
   const fetchMovies = async () => {
     try {
-      const res = await api.get("/movies", {
-        params: {
-          genre,
-          director,
-          year,
-          page,
-          limit: 5,
-        },
-      });
-
+      const queryParams: any = {
+        genre,
+        director,
+        page,
+        limit: 5,
+      };
+  
+      if (/^\d{4}$/.test(year)) {
+        queryParams.year = year;
+      }
+  
+      const res = await api.get("/movies", { params: queryParams });
+  
       setMovies(res.data.movies);
       setTotalPages(res.data.totalPages);
       setError("");
     } catch (err: any) {
       setError("Error al obtener películas");
     }
-  };
+  };  
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setGenre("");
+      setDirector("");
+      setYear("");
+      setPage(1);
+    }
+  }, [location]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -44,17 +59,11 @@ const Home = () => {
 
   useEffect(() => {
     fetchMovies();
-  }, [page]);
+  }, [page, genre, director, year]);  
 
   const handleSearch = () => {
-    setPage(1); // Reinicia a la página 1 con nuevos filtros
-    fetchMovies();
+    setPage(1);
   };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = "http://localhost:8081/login";
-  };  
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center px-4 overflow-x-hidden">
@@ -97,11 +106,18 @@ const Home = () => {
         {/* Error */}
         {error && <p className="text-red-600 mb-4">{error}</p>}
 
-        {/* Lista de películas */}
+        {/* Lista de películas o mensaje vacío */}
         <div className="grid gap-4 mb-6">
-          {movies.map((movie: any) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
+          {movies.length > 0 ? (
+            movies.map((movie: any) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))
+          ) : (
+            <div className="text-center text-gray-500 text-lg flex flex-col items-center mt-8">
+              <span className="text-5xl mb-2">🎞️</span>
+              <p>No se encontraron resultados para los filtros ingresados.</p>
+            </div>
+          )}
         </div>
 
         {/* Paginación */}
