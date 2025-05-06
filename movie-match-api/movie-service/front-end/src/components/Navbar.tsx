@@ -14,15 +14,15 @@ const Navbar = () => {
       <div className="flex items-center space-x-2">
         <Link
           to="/"
-          className="text-white hover:text-purple-400 transition-colors"
+          className="text-white hover:text-purple-400 transition-colors mr-3"
         >
           Inicio
         </Link>
         <Link
           to="/create"
-          className="text-white hover:text-purple-400 transition-colors ml-3"
+          className="text-white hover:text-purple-400 transition-colors"
         >
-          Crear película
+          Agregar película
         </Link>
       </div>
       <button
