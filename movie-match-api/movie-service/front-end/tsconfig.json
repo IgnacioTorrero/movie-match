@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "composite": true
+    "composite": true,
+    "jsx": "react-jsx"
   },
   "files": [],
   "references": [
@@ -8,4 +9,3 @@
     { "path": "./tsconfig.node.json" }
   ]
 }
-

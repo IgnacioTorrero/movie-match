@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { JSX } from "react";
 import Home from "./pages/Home";
 import CreateMovie from "./pages/CreateMovie";
 import EditMovie from "./pages/EditMovie";
