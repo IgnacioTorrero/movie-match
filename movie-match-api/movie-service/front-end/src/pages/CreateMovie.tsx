@@ -39,6 +39,9 @@ const CreateMovie = () => {
       <input name="genre" placeholder="Género" className="w-full p-2 mb-2 border rounded" onChange={handleChange} />
       <textarea name="synopsis" placeholder="Sinopsis (opcional)" className="w-full p-2 mb-2 border rounded" onChange={handleChange} />
       <button onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Crear</button>
+      <button onClick={() => navigate("/")} className="ml-2 bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded">
+        Cancelar
+      </button>
       {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );

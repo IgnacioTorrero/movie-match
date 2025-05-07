@@ -50,6 +50,7 @@ const EditMovie = () => {
       <input name="genre" placeholder="Género" className="w-full p-2 mb-2 border rounded" value={form.genre} onChange={handleChange} />
       <textarea name="synopsis" placeholder="Sinopsis" className="w-full p-2 mb-2 border rounded" value={form.synopsis} onChange={handleChange} />
       <button onClick={handleSubmit} className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Actualizar</button>
+      <button onClick={() => navigate("/")} className="ml-2 bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded">Cancelar</button>
       {error && <p className="text-red-500 mt-4">{error}</p>}
       {/* ⭐ Calificación separada */}
       <div className="mt-6 border-t pt-4">

@@ -44,17 +44,28 @@ const MovieDetails = () => {
         <p><strong>Sinopsis:</strong> {movie.synopsis}</p>
         <p><strong>Mi calificación:</strong> {movie.userRating}</p>
       </div>
+      <div className="mt-4 flex flex-wrap gap-2 ml-1">
       <button
         onClick={() => navigate(`/movies/edit/${id}`)}
-        className="mt-4 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded">
+        className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
+      >
         Editar película
       </button>  
       <button
         onClick={handleDelete}
-        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded ml-2">
+        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+      >
         Eliminar película
       </button>
-      <RatingStars movieId={parseInt(id!)} initialScore={movie.userRating || 0} />
+      <button
+        onClick={() => navigate("/")}
+        className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+      >
+        Volver
+      </button>
+    </div>
+
+    <RatingStars movieId={parseInt(id!)} initialScore={movie.userRating || 0} />
     </>
   );  
 };
