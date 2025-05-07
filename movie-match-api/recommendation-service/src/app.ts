@@ -16,7 +16,10 @@ const app = express();
 const swaggerDocument = YAML.load(path.resolve(__dirname, "../swagger.yaml"));
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:8082",
+    credentials: true,
+  }));  
 app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api/recommendations", recomendationRoutes);

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import movieApi from "../api/movieApi";
 import MovieCard from "../components/MovieCard";
+import RecommendedMovies from "../components/RecommendedMovies";
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -140,6 +141,9 @@ const Home = () => {
             Siguiente ▶
           </button>
         </div>
+
+        {/* 🔽 Recomendaciones */}
+        <RecommendedMovies />
       </div>
     </div>
   );
