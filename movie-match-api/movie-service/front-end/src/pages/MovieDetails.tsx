@@ -2,7 +2,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
+import RatingStars from "../components/RatingStars";
+import movieApi from "../api/movieApi";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,7 +12,7 @@ const MovieDetails = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get(`/movies/${id}`)
+    movieApi.get(`/movies/${id}`)
       .then(res => setMovie(res.data))
       .catch(err => {
         setError(err.response?.data?.error || "Error al cargar película");
@@ -23,7 +24,7 @@ const MovieDetails = () => {
     if (!confirmed) return;
 
     try {
-      await api.delete(`/movies/${id}`);
+      await movieApi.delete(`/movies/${id}`);
       navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.error || "Error al eliminar película");
@@ -53,6 +54,7 @@ const MovieDetails = () => {
         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded ml-2">
         Eliminar película
       </button>
+      <RatingStars movieId={parseInt(id!)} initialScore={movie.userRating || 0} />
     </>
   );  
 };

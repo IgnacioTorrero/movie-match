@@ -73,7 +73,7 @@ services:
     depends_on:
       - mysql
 
-  movratingie-frontend:
+  rating-frontend:
     build:
       context: ./rating-service/front-end
       dockerfile: Dockerfile

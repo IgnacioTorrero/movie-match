@@ -1,6 +1,6 @@
 // src/pages/CreateMovie.tsx
 import { useState } from "react";
-import api from "../api";
+import movieApi from "../api/movieApi";
 import { useNavigate } from "react-router-dom";
 
 const CreateMovie = () => {
@@ -22,7 +22,7 @@ const CreateMovie = () => {
   const handleSubmit = async () => {
     try {
       const yearNumber = parseInt(form.year);
-      const res = await api.post("/movies", { ...form, year: yearNumber });
+      const res = await movieApi.post("/movies", { ...form, year: yearNumber });
       console.log("Película creada:", res.data);
       navigate("/");
     } catch (err: any) {

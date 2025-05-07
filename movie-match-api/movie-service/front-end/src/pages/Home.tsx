@@ -1,7 +1,7 @@
 // src/pages/Home.tsx
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import api from "../api";
+import movieApi from "../api/movieApi";
 import MovieCard from "../components/MovieCard";
 
 const Home = () => {
@@ -26,7 +26,7 @@ const Home = () => {
         queryParams.year = year;
       }
   
-      const res = await api.get("/movies", { params: queryParams });
+      const res = await movieApi.get("/movies", { params: queryParams });
   
       setMovies(res.data.movies);
       setTotalPages(res.data.totalPages);

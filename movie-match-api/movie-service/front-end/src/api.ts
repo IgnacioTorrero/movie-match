@@ -1,4 +1,5 @@
 // src/api.ts
+/*
 import axios from "axios";
 import { getToken } from "./auth";
 
@@ -13,3 +14,4 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
+*/
