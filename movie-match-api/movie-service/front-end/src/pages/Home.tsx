@@ -143,7 +143,7 @@ const Home = () => {
         </div>
 
         {/* 🔽 Recomendaciones */}
-        <RecommendedMovies />
+        {!genre && !director && !year && <RecommendedMovies />}
       </div>
     </div>
   );
