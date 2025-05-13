@@ -43,7 +43,7 @@ router.get(
   authenticateToken,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { genre, director, year, page = 1, limit = 5 } = req.query;
+      const { genre, director, year, page = 1, limit = 5 } = req.query as { genre?: string; director?: string; year?: string; page?: number; limit?: number };
       const userId = (req as any).user.id;
 
       const filters: any = {};

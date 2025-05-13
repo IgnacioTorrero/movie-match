@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import movieApi from "../api/movieApi";
@@ -22,20 +21,20 @@ const Home = () => {
         page,
         limit: 5,
       };
-  
+
       if (/^\d{4}$/.test(year)) {
         queryParams.year = year;
       }
-  
+
       const res = await movieApi.get("/movies", { params: queryParams });
-  
+
       setMovies(res.data.movies);
       setTotalPages(res.data.totalPages);
       setError("");
     } catch (err: any) {
       setError("Error al obtener películas");
     }
-  };  
+  };
 
   const location = useLocation();
 
@@ -51,7 +50,7 @@ const Home = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tokenFromURL = urlParams.get("token");
-  
+
     if (tokenFromURL) {
       localStorage.setItem("token", tokenFromURL);
       window.history.replaceState(null, "", window.location.pathname);
@@ -60,11 +59,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchMovies();
-  }, [page, genre, director, year]);  
-
-  const handleSearch = () => {
-    setPage(1);
-  };
+  }, [page, genre, director, year]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center px-4 overflow-x-hidden">
@@ -74,7 +69,7 @@ const Home = () => {
         </h1>
 
         {/* Filtros */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <input
             type="text"
             placeholder="Género"
@@ -96,12 +91,6 @@ const Home = () => {
             value={year}
             onChange={(e) => setYear(e.target.value)}
           />
-          <button
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2"
-            onClick={handleSearch}
-          >
-            Buscar
-          </button>
         </div>
 
         {/* Error */}

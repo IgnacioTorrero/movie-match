@@ -35,7 +35,7 @@ export default function Login() {
             setUser(data.user);
             setError('');
             // Redireccionamiento a pagina principal
-            window.location.href = `http://localhost:8082/?token=${data.token}`;
+            navigate(`/?token=${data.token}`);
         }
         catch (err) {
             if (err instanceof Error) {

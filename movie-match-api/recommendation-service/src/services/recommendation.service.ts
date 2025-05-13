@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 // Algoritmo de recomendación basado en calificaciones del usuario
 export const getRecommendedMovies = async (userId: number) => {
-  let highRatedMovies: { movie: { id: number; genre: string } }[];
+  let highRatedMovies: { movie: { id: number; genre: string } }[] = [];
   try {
     highRatedMovies = await prisma.rating.findMany({
       where: { userId, score: { gte: 4 } },
@@ -62,7 +62,9 @@ export const getRecommendedMovies = async (userId: number) => {
     take: 5,
   });
 
-  return recommendedMovies.length > 0
-    ? recommendedMovies
-    : [{ message: "No se encontraron recomendaciones nuevas." }];
+  const moviesToReturn = recommendedMovies.length > 0
+  ? recommendedMovies
+  : [{ message: "No se encontraron recomendaciones nuevas." }];
+
+  return moviesToReturn;
 };

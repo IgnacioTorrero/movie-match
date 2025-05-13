@@ -83,7 +83,7 @@ export const getMovieById = async (id: number, userId: number) => {
     },
   });
 
-  if (!movie) return null;
+  if (!movie) throw new Error("Película no encontrada");
   const userRating = movie.rating.length > 0 ? movie.rating[0].score : "No hay rate";
   const { rating, ...movieWithoutRatings } = movie;
 

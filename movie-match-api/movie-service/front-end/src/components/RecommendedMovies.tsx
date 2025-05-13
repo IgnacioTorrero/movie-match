@@ -13,7 +13,7 @@ const RecommendedMovies = () => {
         if (res.data?.message) {
           setError(res.data.message);
         } else {
-          setRecommended(res.data);
+          setRecommended(Array.isArray(res.data) ? res.data : []);
         }
       } catch (err) {
         setError("No se pudieron cargar las recomendaciones.");

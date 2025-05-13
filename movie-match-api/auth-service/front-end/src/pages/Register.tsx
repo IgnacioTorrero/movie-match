@@ -19,7 +19,7 @@ export default function Register() {
         body: JSON.stringify(form)
       });
       const data = await res.json();
-      if (!res.ok) {
+      if (!res.ok || !data.error) {
         const errMsg = Array.isArray(data.error)
           ? data.error.map((e: any) => e.message).join(', ')
           : data.error || 'Error';
@@ -27,6 +27,7 @@ export default function Register() {
       }      
       setUser(data);
       setError('');
+      setForm({ name: '', email: '', password: '' });
     } catch (err: unknown) {
       if (err instanceof Error) {
         if (err.message.includes('[object')) {
@@ -49,7 +50,13 @@ export default function Register() {
         <input className="w-full p-2 mb-4 border rounded" placeholder="Password" name="password" type="password" value={form.password} onChange={handleChange} />
         <div className="flex justify-between">
           <button className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded" onClick={() => navigate('/')}>Volver</button>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" onClick={register}>Registrarse</button>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+            onClick={register}
+            disabled={!form.name || !form.email || !form.password}
+          >
+            Registrarse
+          </button>
         </div>
         {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
         {user && <p className="text-green-600 mt-2 text-sm">Registrado como: {user.email}</p>}
