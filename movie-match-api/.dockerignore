@@ -1,0 +1,21 @@
+# Node / TypeScript
+node_modules
+dist
+*.log
+*.test.*
+*.spec.*
+
+# Configs
+.env
+.env.*
+.vscode
+.idea
+
+# Lockfiles
+# package-lock.json
+# yarn.lock
+
+# Frontend build/output folders
+auth-service/front-end/node_modules
+auth-service/front-end/dist
+auth-service/front-end/.env

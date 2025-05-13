@@ -27,6 +27,15 @@ services:
     depends_on:
       - mysql
 
+  auth-frontend:
+    build:
+      context: ./auth-service/front-end
+      dockerfile: Dockerfile
+    container_name: auth-frontend
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+
   movie-service:
     build:
       context: .
@@ -41,6 +50,15 @@ services:
     depends_on:
       - mysql
 
+  movie-frontend:
+    build:
+      context: ./movie-service/front-end
+      dockerfile: Dockerfile
+    container_name: movie-frontend
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+
   rating-service:
     build:
       context: .
@@ -54,6 +72,15 @@ services:
       - "3003:3000"
     depends_on:
       - mysql
+
+  rating-frontend:
+    build:
+      context: ./rating-service/front-end
+      dockerfile: Dockerfile
+    container_name: rating-frontend
+    restart: unless-stopped
+    ports:
+      - "8083:80"
 
   recommendation-service:
     build:

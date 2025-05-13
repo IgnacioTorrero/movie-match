@@ -16,8 +16,8 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     res.status(200).json(recommendations);
   } catch (error: any) {
     console.error("Error en /recommendations:", error);
-    res.status(500).json({ error: "Error al obtener recomendaciones" });
-  }
+    res.status(500).json({ error: error.message || "Error al obtener recomendaciones" });
+  }  
 });
 
 export default router;
