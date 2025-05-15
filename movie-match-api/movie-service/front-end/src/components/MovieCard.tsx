@@ -12,6 +12,8 @@ interface MovieCardProps {
 }
 
 const MovieCard = ({ movie }: MovieCardProps) => {
+  if (!movie.id) return null;
+  
   return (
     <div className="p-4 border rounded shadow hover:bg-gray-50">
       <h2 className="text-lg font-bold">{movie.title}</h2>

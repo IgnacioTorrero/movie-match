@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import redis from "../utils/redisClient";
 
 export const prisma = new PrismaClient();
 
@@ -118,6 +119,13 @@ export const updateMovie = async (
 // Eliminar película
 export const deleteMovie = async (id: number) => {
   try {
+    // Buscar los userId relacionados a la película
+    const userRelations = await prisma.userMovies.findMany({
+      where: { movieId: id },
+      select: { userId: true },
+    });
+
+    // Borrar calificaciones y relaciones
     await prisma.rating.deleteMany({
       where: { movieId: id },
     });
@@ -126,9 +134,17 @@ export const deleteMovie = async (id: number) => {
       where: { movieId: id },
     });
 
-    return await prisma.movie.delete({
+    // Borrar la película
+    const deleted = await prisma.movie.delete({
       where: { id },
     });
+
+    // Limpiar caché de recomendaciones por cada usuario afectado
+    for (const relation of userRelations) {
+      await redis.del(`recommendations:${relation.userId}`);
+    }
+
+    return deleted;
   } catch (error: any) {
     console.error("Error en deleteMovie:", error);
     throw new Error("Movie not found");

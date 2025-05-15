@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { getRecommendedMovies } from "../services/recommendation.service";
 import { authenticateToken } from "../middlewares/auth.middleware";
+import redis from "../utils/redisClient";
 
 const router = Router();
 
@@ -18,6 +19,13 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     console.error("Error en /recommendations:", error);
     res.status(500).json({ error: error.message || "Error al obtener recomendaciones" });
   }  
+});
+
+// 🔄 Borrar la caché del usuario
+router.delete("/cache", authenticateToken, async (req: Request, res: Response) => {
+  const userId = (req as any)?.user?.id;
+  await redis.del(`recommendations:${userId}`);
+  res.json({ message: "Caché de recomendaciones borrada" });
 });
 
 export default router;
