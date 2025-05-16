@@ -1,15 +1,26 @@
 import { PrismaClient } from "@prisma/client";
+import redis from "../utils/redisClient";
 
 const prisma = new PrismaClient();
 
 // Algoritmo de recomendación basado en calificaciones del usuario
 export const getRecommendedMovies = async (userId: number) => {
+  const cacheKey = `recommendations:${userId}`;
+  const cached = await redis.get(cacheKey);
+
+  if (cached) {
+    console.log("📦 Recomendaciones desde caché");
+    return JSON.parse(cached);
+  }
+
   let highRatedMovies: { movie: { id: number; genre: string } }[] = [];
   try {
     highRatedMovies = await prisma.rating.findMany({
       where: { userId, score: { gte: 4 } },
       include: { movie: true },
     });
+
+    highRatedMovies = highRatedMovies.filter(r => r.movie && r.movie.genre);
   } catch (error) {
     console.error("Error al obtener calificaciones:", error);
     throw new Error("Error al acceder a la base de datos.");
@@ -37,11 +48,6 @@ export const getRecommendedMovies = async (userId: number) => {
     .filter(([_, count]) => count === maxCount)
     .map(([genre]) => genre);
 
-  console.log("🎭 Géneros favoritos:", favoriteGenres);
-  console.log("🎯 Calificaciones altas:", highRatedMovies.length);
-  console.log("🎭 Conteo de géneros:", genreCount);
-  console.log("🧠 Géneros seleccionados:", favoriteGenres);
-
   // 3. Obtener IDs de películas ya calificadas por el usuario
   const ratedMovieIds = highRatedMovies.map(({ movie }) => movie.id);
 
@@ -51,7 +57,7 @@ export const getRecommendedMovies = async (userId: number) => {
       AND: [
         {
           OR: favoriteGenres.map((genre) => ({
-            genre: { contains: genre, },
+            genre: { contains: genre },
           })),
         },
         {
@@ -62,9 +68,15 @@ export const getRecommendedMovies = async (userId: number) => {
     take: 5,
   });
 
-  const moviesToReturn = recommendedMovies.length > 0
-  ? recommendedMovies
-  : [{ message: "No se encontraron recomendaciones nuevas." }];
+  // 🔍 Filtrar películas inválidas
+  const validRecommendations = recommendedMovies.filter((m: any) => m && m.id);
 
-  return moviesToReturn;
+  // Si no hay recomendaciones válidas, no se guarda nada en caché
+  if (validRecommendations.length === 0) {
+    return { message: "No se encontraron recomendaciones nuevas." };
+  }
+
+  // Guardar en Redis solo si hay recomendaciones válidas
+  await redis.set(cacheKey, JSON.stringify(validRecommendations), "EX", 600);
+  return validRecommendations;
 };

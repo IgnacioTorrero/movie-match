@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import redis from "../utils/redisClient";
 
 export const prisma = new PrismaClient();
 
@@ -22,19 +23,29 @@ export const rateMovie = async (userId: number, movieId: number, score: number) 
 
   if (existingRating) {
     try {
-      return await prisma.rating.update({
+      const updated = await prisma.rating.update({
         where: { id: existingRating.id },
         data: { score }
       });
+
+      await redis.del(`recommendations:${userId}`);
+      console.log("🧹 Caché de recomendaciones invalidado (update)");
+
+      return updated;
     } catch (error) {
       throw new Error("Error al actualizar la calificación.");
     }
   }
-  
+
   try {
-    return await prisma.rating.create({
+    const created = await prisma.rating.create({
       data: { userId, movieId, score },
     });
+
+    await redis.del(`recommendations:${userId}`);
+    console.log("🧹 Caché de recomendaciones invalidado (create)");
+
+    return created;
   } catch (error) {
     throw new Error("Error al crear la calificación.");
   }

@@ -19,7 +19,7 @@ export default function Register() {
         body: JSON.stringify(form)
       });
       const data = await res.json();
-      if (!res.ok || !data.error) {
+      if (!res.ok) {
         const errMsg = Array.isArray(data.error)
           ? data.error.map((e: any) => e.message).join(', ')
           : data.error || 'Error';
