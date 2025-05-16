@@ -30,6 +30,7 @@ export const getRecommendedMovies = async (userId: number) => {
     return { message: "No hay suficientes datos para recomendar películas." };
   }
 
+  // 1. Contar géneros más frecuentes
   const genreCount: Record<string, number> = {};
   highRatedMovies.forEach(({ movie }) => {
     movie.genre.split("/").forEach((genre: string) => {
@@ -37,6 +38,7 @@ export const getRecommendedMovies = async (userId: number) => {
     });
   });
 
+  // 2. Determinar el máximo de frecuencia y géneros empatados
   if (Object.keys(genreCount).length === 0) {
     return { message: "No se encontraron géneros para recomendar películas." };
   }
@@ -46,8 +48,10 @@ export const getRecommendedMovies = async (userId: number) => {
     .filter(([_, count]) => count === maxCount)
     .map(([genre]) => genre);
 
+  // 3. Obtener IDs de películas ya calificadas por el usuario
   const ratedMovieIds = highRatedMovies.map(({ movie }) => movie.id);
 
+  // 4. Buscar películas de géneros favoritos que NO hayan sido vistas
   const recommendedMovies = await prisma.movie.findMany({
     where: {
       AND: [
