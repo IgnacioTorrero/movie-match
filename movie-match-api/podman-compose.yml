@@ -109,5 +109,21 @@ services:
       - mysql
       - redis
 
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    depends_on:
+      - auth-service
+      - movie-service
+      - rating-service
+      - recommendation-service
+    environment:
+      JWT_SECRET: abc123
+
 volumes:
   db_data:
