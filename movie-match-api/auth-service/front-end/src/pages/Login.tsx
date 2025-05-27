@@ -42,7 +42,7 @@ export default function Login() {
       setError('');
 
       // Redireccionamiento a pagina principal
-      window.location.href = `http://localhost:8082/?token=${data.token}`;
+      window.location.href = `/movies/?token=${data.token}`;
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

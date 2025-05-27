@@ -4,10 +4,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import path from 'path';
 import { verifyJWT } from './middlewares/auth.middleware';
 
 dotenv.config();
-
 const app = express();
 const PORT = 3005;
 
@@ -17,7 +17,7 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Proxys
+// Proxys API
 app.use('/api/auth', proxy('http://auth-service:3000', {
   proxyReqPathResolver: req => req.originalUrl
 }));
@@ -34,6 +34,22 @@ app.use('/api/recommendations', verifyJWT, proxy('http://recommendation-service:
   proxyReqPathResolver: req => req.originalUrl
 }));
 
+// Servir los frontends
+app.use('/auth', express.static(path.join(__dirname, '../public/auth')));
+app.use('/movies', express.static(path.join(__dirname, '../public/movies')));
+app.use('/ratings', express.static(path.join(__dirname, '../public/ratings')));
+
+app.get('/auth/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/auth/index.html'));
+});
+app.get('/movies/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/movies/index.html'));
+});
+app.get('/ratings/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/ratings/index.html'));
+});
+
+// Arrancar servidor
 app.listen(PORT, () => {
   console.log(`API Gateway en http://localhost:${PORT}`);
 });

@@ -6,7 +6,7 @@ const Navbar = () => {
   const handleLogout = () => {
     removeToken();
     localStorage.removeItem("userEmail");
-    window.location.href = "http://localhost:8081/";
+    window.location.href = "/auth/";
   };  
 
   return (
