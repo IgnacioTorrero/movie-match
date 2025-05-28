@@ -37,16 +37,12 @@ app.use('/api/recommendations', verifyJWT, proxy('http://recommendation-service:
 // Servir los frontends
 app.use('/auth', express.static(path.join(__dirname, '../public/auth')));
 app.use('/movies', express.static(path.join(__dirname, '../public/movies')));
-app.use('/ratings', express.static(path.join(__dirname, '../public/ratings')));
 
 app.get('/auth/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/auth/index.html'));
 });
 app.get('/movies/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/movies/index.html'));
-});
-app.get('/ratings/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/ratings/index.html'));
 });
 
 // Arrancar servidor
