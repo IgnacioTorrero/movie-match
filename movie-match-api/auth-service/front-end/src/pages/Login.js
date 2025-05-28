@@ -17,7 +17,7 @@ export default function Login() {
                 email: cleanEmail,
                 password: loginForm.password
             });
-            const res = await fetch('http://localhost:3001/api/auth/login', {
+            const res = await fetch('http://localhost:3005/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -35,7 +35,7 @@ export default function Login() {
             setUser(data.user);
             setError('');
             // Redireccionamiento a pagina principal
-            navigate(`/?token=${data.token}`);
+            window.location.href = `/movies/?token=${data.token}`;
         }
         catch (err) {
             if (err instanceof Error) {

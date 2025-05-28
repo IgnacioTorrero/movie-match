@@ -21,7 +21,7 @@ export default function Login() {
         password: loginForm.password
       });
 
-      const res = await fetch('http://localhost:3001/api/auth/login', {
+      const res = await fetch('http://localhost:3005/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -42,7 +42,7 @@ export default function Login() {
       setError('');
 
       // Redireccionamiento a pagina principal
-      window.location.href = `http://localhost:8082/?token=${data.token}`;
+      window.location.href = `/movies/?token=${data.token}`;
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

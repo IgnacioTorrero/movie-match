@@ -13,7 +13,7 @@ COPY prisma ./prisma
 COPY recommendation-service/swagger/swagger.yaml /app/swagger.yaml
 
 RUN rm -rf dist && \
-    tsc && \
+    npx tsc && \
     chmod +x ./node_modules/.bin/prisma && \
     npx prisma generate --schema=./prisma/schema.prisma
 

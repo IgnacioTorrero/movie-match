@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "../auth";
 
 const recommendationApi = axios.create({
-  baseURL: "http://localhost:3004/api/recommendations",
+  baseURL: "http://localhost:3005/api/recommendations",
 });
 
 recommendationApi.interceptors.request.use((config) => {

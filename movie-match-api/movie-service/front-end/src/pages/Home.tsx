@@ -55,6 +55,8 @@ const Home = () => {
       localStorage.setItem("token", tokenFromURL);
       window.history.replaceState(null, "", window.location.pathname);
     }
+
+    fetchMovies();
   }, []);
 
   useEffect(() => {
