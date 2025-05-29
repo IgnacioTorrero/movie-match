@@ -3,14 +3,9 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   transform: {
-    "^.+\\.ts$": "ts-jest"
+    "^.+\\.ts$": ["ts-jest", { tsconfig: "./tsconfig.json" }]
   },
   moduleFileExtensions: ["ts", "js", "json"],
   testMatch: ["**/test/**/*.test.ts"],
-  modulePathIgnorePatterns: ["<rootDir>/front-end"],
-  globals: {
-    "ts-jest": {
-      tsconfig: "./tsconfig.json"
-    }
-  }
+  modulePathIgnorePatterns: ["<rootDir>/front-end"]
 };
