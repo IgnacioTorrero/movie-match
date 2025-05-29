@@ -56,4 +56,11 @@ describe("Auth Service", () => {
   test("Debe fallar login con credenciales incorrectas", async () => {
     await expect(loginUser("wrong@example.com", "wrongpassword")).rejects.toThrow("Invalid credentials");
   });
+
+  test("Debe fallar login si la contraseña es incorrecta", async () => {
+    const email = "john@example.com";
+    const passwordIncorrecto = "claveEquivocada";
+
+    await expect(loginUser(email, passwordIncorrecto)).rejects.toThrow("Invalid credentials");
+  });
 });

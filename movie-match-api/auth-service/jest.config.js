@@ -1,6 +1,16 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  setupFiles: ["<rootDir>/test/setup-env.js"],
-  setupFilesAfterEnv: ["./jest.setup.ts"], // Configuración opcional para limpiar DB en cada test
+  transform: {
+    "^.+\\.ts$": "ts-jest"
+  },
+  moduleFileExtensions: ["ts", "js", "json"],
+  testMatch: ["**/test/**/*.test.ts"],
+  modulePathIgnorePatterns: ["<rootDir>/front-end"],
+  globals: {
+    "ts-jest": {
+      tsconfig: "./tsconfig.json"
+    }
+  }
 };
