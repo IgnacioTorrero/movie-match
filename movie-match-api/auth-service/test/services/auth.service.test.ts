@@ -1,5 +1,4 @@
-import { registerUser, loginUser } from "../src/services/auth.service";
-import bcrypt from "bcryptjs";
+import { registerUser, loginUser } from "../../src/services/auth.service";
 import jwt from "jsonwebtoken";
 
 // Mock Prisma Client
