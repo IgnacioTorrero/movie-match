@@ -4,7 +4,7 @@ import redis from "../utils/redisClient";
 export const prisma = new PrismaClient();
 
 // Crear película asociada al usuario
-export const createMovie = async (
+const createMovie = async (
   userId: number,
   title: string,
   director: string,
@@ -57,7 +57,7 @@ export const getMoviesByUser = async (
 };
 
 // Contar películas del usuario que cumplen filtros
-export const countMoviesByUser = async (userId: number, filters: any) => {
+const countMoviesByUser = async (userId: number, filters: any) => {
   return await prisma.movie.count({
     where: {
       AND: [
@@ -73,7 +73,7 @@ export const countMoviesByUser = async (userId: number, filters: any) => {
 };
 
 // Obtener película por ID verificando usuario
-export const getMovieById = async (id: number, userId: number) => {
+const getMovieById = async (id: number, userId: number) => {
   const movie = await prisma.movie.findFirst({
     where: {
       id,
@@ -95,7 +95,7 @@ export const getMovieById = async (id: number, userId: number) => {
 };
 
 // Actualizar película
-export const updateMovie = async (
+const updateMovie = async (
   id: number,
   title: string,
   director: string,
@@ -117,7 +117,7 @@ export const updateMovie = async (
 };
 
 // Eliminar película
-export const deleteMovie = async (id: number) => {
+const deleteMovie = async (id: number) => {
   try {
     // Buscar los userId relacionados a la película
     const userRelations = await prisma.userMovies.findMany({
@@ -149,4 +149,13 @@ export const deleteMovie = async (id: number) => {
     console.error("Error en deleteMovie:", error);
     throw new Error("Movie not found");
   }
+};
+
+export {
+  createMovie,
+  getMoviesByUser as getMovies,
+  countMoviesByUser,
+  getMovieById,
+  updateMovie,
+  deleteMovie
 };
