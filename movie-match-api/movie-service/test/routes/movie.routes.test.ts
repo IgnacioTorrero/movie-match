@@ -1,7 +1,6 @@
 import request from "supertest";
 import express from "express";
 import movieRouter from "../../src/routes/movie.routes";
-import { authenticateToken } from "../../src/middlewares/auth.middleware";
 import { prisma } from "../../src/services/movie.service";
 
 jest.mock("../../src/middlewares/auth.middleware", () => ({
@@ -118,11 +117,10 @@ describe("Movie Routes", () => {
 
         expect(res.status).toBe(200);
         expect(res.body.title).toBe("Test Movie");
-        expect(res.body.userRating).toBe(4); // viene del mock
+        expect(res.body.userRating).toBe(4);
     });
 
     test("GET /movies/:id - debería devolver 404 si la película no existe", async () => {
-        // Modificamos momentáneamente el mock para devolver null
         const originalFindFirst = prisma.movie.findFirst;
         prisma.movie.findFirst = jest.fn(() => null);
 
@@ -131,7 +129,6 @@ describe("Movie Routes", () => {
         expect(res.status).toBe(404);
         expect(res.body.error).toBe("Movie not found");
 
-        // Restauramos el mock original
         prisma.movie.findFirst = originalFindFirst;
     });
 

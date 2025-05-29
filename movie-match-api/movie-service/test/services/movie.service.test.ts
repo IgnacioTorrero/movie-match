@@ -164,7 +164,6 @@ describe("Movie Service", () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
 
-    // Simular película sin rating
     mockInstance.movie.findFirst.mockResolvedValueOnce({
       id: 2,
       title: "Sin rating",

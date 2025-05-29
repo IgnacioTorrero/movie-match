@@ -9,7 +9,7 @@ jest.mock("../../src/prisma", () => ({
 import request from "supertest";
 import express from "express";
 import userRoutes from "../../src/routes/user.route";
-import { prisma } from "../../src/prisma"; // importamos el mock correcto
+import { prisma } from "../../src/prisma";
 
 const app = express();
 app.use(express.json());

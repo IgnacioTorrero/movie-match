@@ -39,7 +39,7 @@ describe("Recommendation Service", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    redis.get.mockResolvedValue(null); // Limpiar caché en cada test
+    redis.get.mockResolvedValue(null);
   });
 
   test("Debe recomendar películas basadas en el género favorito del usuario", async () => {
@@ -87,7 +87,7 @@ describe("Recommendation Service", () => {
 
     const recommendations = await getRecommendedMovies(userId);
 
-    expect(recommendations).toEqual({ message: "No se encontraron recomendaciones nuevas." }); // Alineado con tu implementación real
+    expect(recommendations).toEqual({ message: "No se encontraron recomendaciones nuevas." });
   });
 
   test("Debe devolver recomendaciones desde caché si están disponibles", async () => {
