@@ -11,4 +11,10 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.ts"],
   coverageDirectory: "coverage",
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "src/app.ts",
+    "src/server.ts",
+    "src/prisma.ts"
+  ],
 };
