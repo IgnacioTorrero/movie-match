@@ -19,16 +19,27 @@ jest.mock("@prisma/client", () => {
   };
 });
 
-import { getRecommendedMovies } from "../src/services/recommendation.service";
+import { getRecommendedMovies } from "../../src/services/recommendation.service";
 import { jest } from "@jest/globals";
 
 const { PrismaClient } = jest.requireMock("@prisma/client") as any;
 const prismaInstance = new PrismaClient();
 const { ratingFindManyMock, movieFindManyMock } = prismaInstance.__MOCS__;
 
+jest.mock("../../src/utils/redisClient", () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn<() => Promise<string | null>>().mockResolvedValue(null),
+    set: jest.fn(),
+  },
+}));
+
 describe("Recommendation Service", () => {
+  const redis = require("../../src/utils/redisClient").default;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    redis.get.mockResolvedValue(null);
   });
 
   test("Debe recomendar películas basadas en el género favorito del usuario", async () => {
@@ -76,6 +87,37 @@ describe("Recommendation Service", () => {
 
     const recommendations = await getRecommendedMovies(userId);
 
-    expect(recommendations).toEqual([{ message: "No se encontraron recomendaciones." }]);
+    expect(recommendations).toEqual({ message: "No se encontraron recomendaciones nuevas." });
+  });
+
+  test("Debe devolver recomendaciones desde caché si están disponibles", async () => {
+    const userId = 4;
+    const cachedMovies = [{ id: 401, title: "Película en caché", genre: "Action" }];
+    redis.get.mockResolvedValueOnce(JSON.stringify(cachedMovies));
+
+    const result = await getRecommendedMovies(userId);
+
+    expect(redis.get).toHaveBeenCalledWith(`recommendations:${userId}`);
+    expect(result).toEqual(cachedMovies);
+  });
+
+  test("Debe devolver mensaje si las películas no tienen género válido", async () => {
+    const userId = 5;
+    ratingFindManyMock.mockResolvedValue([
+      { movie: { id: 999, genre: "" } }
+    ]);
+
+    const recommendations = await getRecommendedMovies(userId);
+
+    expect(recommendations).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+  });
+
+  test("Debe manejar errores inesperados y lanzar error genérico", async () => {
+    const userId = 6;
+    ratingFindManyMock.mockRejectedValue(new Error("Fallo Prisma"));
+
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    await expect(getRecommendedMovies(userId)).rejects.toThrow("Error al acceder a la base de datos.");
+    consoleErrorSpy.mockRestore();
   });
 });

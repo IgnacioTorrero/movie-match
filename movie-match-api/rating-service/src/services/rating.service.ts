@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
-
-export const prisma = new PrismaClient();
 
 export const rateMovie = async (userId: number, movieId: number, score: number) => {
   if (score < 1 || score > 5) {

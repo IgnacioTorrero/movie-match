@@ -5,7 +5,6 @@ import {
   createMovie,
   getMoviesByUser,
   countMoviesByUser,
-  getMovieById,
   updateMovie,
   deleteMovie,
 } from "../services/movie.service";

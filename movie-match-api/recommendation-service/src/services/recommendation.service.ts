@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
-
-const prisma = new PrismaClient();
 
 // Algoritmo de recomendación basado en calificaciones del usuario
 export const getRecommendedMovies = async (userId: number) => {
