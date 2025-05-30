@@ -4,7 +4,6 @@ import ratingRoutes from "../../src/routes/rating.routes";
 import { rateMovie } from "../../src/services/rating.service";
 import { validateUser } from "../../src/utils/validateUser";
 
-// ✅ Mock de Redis (para evitar conexión real)
 jest.mock("../../src/utils/redisClient", () => ({
   __esModule: true,
   default: {
@@ -15,7 +14,6 @@ jest.mock("../../src/utils/redisClient", () => ({
   },
 }));
 
-// ✅ Mock de Prisma client si se importa desde prisma.ts
 jest.mock("../../src/prisma", () => ({
   __esModule: true,
   prisma: {
@@ -31,7 +29,6 @@ jest.mock("../../src/prisma", () => ({
   },
 }));
 
-// ✅ Mocks funcionales con casting interno
 jest.mock("../../src/services/rating.service");
 jest.mock("../../src/middlewares/auth.middleware", () => ({
   // @ts-ignore

@@ -1,4 +1,3 @@
-// Mock Prisma Client
 jest.mock("@prisma/client", () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
@@ -14,7 +13,6 @@ jest.mock("@prisma/client", () => {
   };
 });
 
-// Mock Redis
 jest.mock("../../src/utils/redisClient", () => ({
   del: jest.fn(),
 }));
