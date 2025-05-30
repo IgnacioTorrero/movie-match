@@ -1,7 +1,7 @@
 import request from "supertest";
 import express from "express";
-import movieRouter from "../../src/routes/movie.routes";
-import { prisma } from "../../src/services/movie.service";
+import movieRouter from "../../routes/movie.routes";
+import { prisma } from "../../services/movie.service";
 
 jest.mock("../../src/middlewares/auth.middleware", () => ({
   authenticateToken: (req: any, res: any, next: any) => {

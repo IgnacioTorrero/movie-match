@@ -5,7 +5,7 @@ import {
   getMovieById,
   updateMovie,
   deleteMovie,
-} from "../../src/services/movie.service";
+} from "../../services/movie.service";
 
 jest.mock("@prisma/client", () => {
   return {

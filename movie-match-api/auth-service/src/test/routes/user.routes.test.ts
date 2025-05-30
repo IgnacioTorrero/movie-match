@@ -8,8 +8,8 @@ jest.mock("../../src/prisma", () => ({
 
 import request from "supertest";
 import express from "express";
-import userRoutes from "../../src/routes/user.route";
-import { prisma } from "../../src/prisma";
+import userRoutes from "../../routes/user.route";
+import { prisma } from "../../prisma";
 
 const app = express();
 app.use(express.json());

@@ -9,8 +9,8 @@ jest.mock("../../src/middlewares/validate.middleware", () => ({
 
 import request from "supertest";
 import express from "express";
-import authRoutes from "../../src/routes/auth.routes";
-import { registerUser, loginUser } from "../../src/services/auth.service";
+import authRoutes from "../../routes/auth.routes";
+import { registerUser, loginUser } from "../../services/auth.service";
 
 const app = express();
 app.use(express.json());

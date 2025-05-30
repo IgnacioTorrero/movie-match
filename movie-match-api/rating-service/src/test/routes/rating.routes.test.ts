@@ -1,8 +1,8 @@
 import request from "supertest";
 import express, { Express } from "express";
-import ratingRoutes from "../../src/routes/rating.routes";
-import { rateMovie } from "../../src/services/rating.service";
-import { validateUser } from "../../src/utils/validateUser";
+import ratingRoutes from "../../routes/rating.routes";
+import { rateMovie } from "../../services/rating.service";
+import { validateUser } from "../../utils/validateUser";
 
 jest.mock("../../src/utils/redisClient", () => ({
   __esModule: true,
@@ -72,7 +72,7 @@ describe("POST /rate", () => {
         // @ts-ignore
       authenticateToken: (req, res, next) => next(),
     }));
-    const { default: ratingRoutesNoUser } = await import("../../src/routes/rating.routes");
+    const { default: ratingRoutesNoUser } = await import("../../routes/rating.routes");
     appWithoutUser.use("/", ratingRoutesNoUser);
 
     const res = await request(appWithoutUser).post("/rate").send({ movieId: 10, score: 5 });

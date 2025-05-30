@@ -21,10 +21,10 @@ process.env.JWT_SECRET = "test-secret";
 
 import request from "supertest";
 import express from "express";
-import recommendationRoutes from "../../src/routes/recommendation.routes";
-import * as recommendationService from "../../src/services/recommendation.service";
-import * as authMiddleware from "../../src/middlewares/auth.middleware";
-import redisClient from "../../src/utils/redisClient";
+import recommendationRoutes from "../../routes/recommendation.routes";
+import * as recommendationService from "../../services/recommendation.service";
+import * as authMiddleware from "../../middlewares/auth.middleware";
+import redisClient from "../../utils/redisClient";
 
 const app = express();
 app.use(express.json());

@@ -19,7 +19,7 @@ jest.mock("@prisma/client", () => {
   };
 });
 
-import { getRecommendedMovies } from "../../src/services/recommendation.service";
+import { getRecommendedMovies } from "../../services/recommendation.service";
 import { jest } from "@jest/globals";
 
 const { PrismaClient } = jest.requireMock("@prisma/client") as any;

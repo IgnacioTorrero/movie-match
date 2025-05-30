@@ -1,4 +1,4 @@
-import { registerUser, loginUser } from "../../src/services/auth.service";
+import { registerUser, loginUser } from "../../services/auth.service";
 import jwt from "jsonwebtoken";
 
 // Mock Prisma Client

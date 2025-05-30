@@ -17,9 +17,9 @@ jest.mock("../../src/utils/redisClient", () => ({
   del: jest.fn(),
 }));
 
-import { rateMovie } from "../../src/services/rating.service";
-import { prisma } from "../../src/prisma";
-import redis from "../../src/utils/redisClient";
+import { rateMovie } from "../../services/rating.service";
+import { prisma } from "../../prisma";
+import redis from "../../utils/redisClient";
 import { jest } from "@jest/globals";
 
 describe("Rating Service", () => {
