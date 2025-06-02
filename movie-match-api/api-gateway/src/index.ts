@@ -44,6 +44,9 @@ app.get('/auth/*', (req, res) => {
 app.get('/movies/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/movies/index.html'));
 });
+app.get('/', (req, res) => {
+  res.redirect('/movies');
+});
 
 // Arrancar servidor
 app.listen(PORT, () => {

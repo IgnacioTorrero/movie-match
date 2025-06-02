@@ -20,7 +20,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       <p>🎬 Director: {movie.director}</p>
       <p>📅 Año: {movie.year}</p>
       <p>🎭 Género: {movie.genre}</p>
-      <Link to={`/movies/${movie.id}`} className="text-blue-500 mt-2 inline-block">Ver detalles</Link>
+      <Link to={`/${movie.id}`} className="text-blue-500 mt-2 inline-block">Ver detalles</Link>
     </div>
   );
 };

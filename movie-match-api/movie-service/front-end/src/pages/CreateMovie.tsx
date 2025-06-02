@@ -20,13 +20,29 @@ const CreateMovie = () => {
   };
 
   const handleSubmit = async () => {
+    if (!form.title || !form.director || !form.year || !form.genre) {
+      setError("Todos los campos excepto la sinopsis son obligatorios.");
+      return;
+    }
+
+    const yearNumber = parseInt(form.year);
+    if (isNaN(yearNumber) || yearNumber < 1800 || yearNumber > new Date().getFullYear()) {
+      setError("El año debe ser un número válido.");
+      return;
+    }
+
     try {
-      const yearNumber = parseInt(form.year);
       const res = await movieApi.post("/movies", { ...form, year: yearNumber });
       console.log("Película creada:", res.data);
       navigate("/");
     } catch (err: any) {
-      setError(err.response?.data?.error || "Error al crear película");
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError("Error desconocido al crear la película");
+      }
     }
   };
 
