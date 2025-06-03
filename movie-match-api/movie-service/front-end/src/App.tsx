@@ -13,15 +13,14 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 
 function App() {
   return (
-    <Router>
+    <Router basename="/movies">
       <div className="min-h-screen bg-gray-100 overflow-x-hidden">
         <Navbar />
         <Routes>
-          <Route path="/" element={<Navigate to="/movies" />} />
-          <Route path="/movies" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/create" element={<PrivateRoute><CreateMovie /></PrivateRoute>} />
-          <Route path="/movies/:id" element={<PrivateRoute><MovieDetails /></PrivateRoute>} />
-          <Route path="/movies/edit/:id" element={<PrivateRoute><EditMovie /></PrivateRoute>} />
+          <Route path="/:id" element={<PrivateRoute><MovieDetails /></PrivateRoute>} />
+          <Route path="/edit/:id" element={<PrivateRoute><EditMovie /></PrivateRoute>} />
         </Routes>
       </div>
     </Router>

@@ -42,7 +42,13 @@ router.get(
   authenticateToken,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { genre, director, year, page = 1, limit = 5 } = req.query as { genre?: string; director?: string; year?: string; page?: number; limit?: number };
+      const { genre, director, year, page = 1, limit = 5 } = req.query as {
+        genre?: string;
+        director?: string;
+        year?: string;
+        page?: number;
+        limit?: number;
+      };
       const userId = (req as any).user.id;
 
       const filters: any = {};
@@ -116,13 +122,20 @@ router.put(
         return;
       }
 
+      const { title, director, year, genre, synopsis } = req.body;
+
+      if (!title || !director || !year || !genre) {
+        res.status(400).json({ error: "Todos los campos son obligatorios excepto sinopsis." });
+        return;
+      }
+
       const updatedMovie = await updateMovie(
         Number(id),
-        req.body.title,
-        req.body.director,
-        req.body.year,
-        req.body.genre,
-        req.body.synopsis
+        title,
+        director,
+        year,
+        genre,
+        synopsis
       );
 
       res.status(200).json(updatedMovie);

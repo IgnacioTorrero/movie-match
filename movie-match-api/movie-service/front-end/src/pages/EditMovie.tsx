@@ -32,12 +32,25 @@ const EditMovie = () => {
   };
 
   const handleSubmit = async () => {
+    // Validaciones básicas
+    if (!form.title || !form.director || !form.year || !form.genre) {
+      setError("Todos los campos excepto sinopsis son obligatorios.");
+      return;
+    }
+
+    const yearNumber = parseInt(form.year.toString());
+    const currentYear = new Date().getFullYear();
+
+    if (isNaN(yearNumber) || yearNumber < 1800 || yearNumber > currentYear) {
+      setError("El año debe ser un número válido entre 1800 y " + currentYear);
+      return;
+    }
+
     try {
-      const yearNumber = parseInt(form.year.toString());
       await movieApi.put(`/movies/${id}`, { ...form, year: yearNumber });
-      navigate(`/movies/${id}`);
+      navigate(`/${id}`);
     } catch (err: any) {
-      setError(err.response?.data?.error || "Error al actualizar la película");
+      setError("Error al actualizar la película. Verificá los datos ingresados.");
     }
   };
 
@@ -51,7 +64,12 @@ const EditMovie = () => {
       <textarea name="synopsis" placeholder="Sinopsis" className="w-full p-2 mb-2 border rounded" value={form.synopsis} onChange={handleChange} />
       <button onClick={handleSubmit} className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Actualizar</button>
       <button onClick={() => navigate("/")} className="ml-2 bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded">Cancelar</button>
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+      {error && (
+        <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow" role="alert">
+          <strong className="font-bold">Error de actualización:</strong>
+          <span className="block sm:inline ml-1">{error}</span>
+        </div>
+      )}
       {/* ⭐ Calificación separada */}
       <div className="mt-6 border-t pt-4">
         <h2 className="text-lg font-semibold mb-2">Actualizar mi calificación</h2>
