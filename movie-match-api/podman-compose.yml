@@ -60,6 +60,7 @@ services:
       DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
       JWT_SECRET: abc123
       REDIS_URL: redis://redis:6379
+      AUTH_SERVICE_URL: http://auth-service:3000
     ports:
       - "3003:3000"
     depends_on:

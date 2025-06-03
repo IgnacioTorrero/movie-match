@@ -22,6 +22,10 @@ app.use('/api/auth', proxy('http://auth-service:3000', {
   proxyReqPathResolver: req => req.originalUrl
 }));
 
+app.use('/api/users', proxy('http://auth-service:3000', {
+  proxyReqPathResolver: req => req.originalUrl
+}));
+
 app.use('/api/movies', verifyJWT, proxy('http://movie-service:3000', {
   proxyReqPathResolver: req => req.originalUrl
 }));
