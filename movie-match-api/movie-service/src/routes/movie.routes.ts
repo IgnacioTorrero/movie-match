@@ -14,6 +14,11 @@ import { authenticateToken } from "../middlewares/auth.middleware";
 
 const router = Router();
 
+/**
+ * @route   POST /movies
+ * @desc    Crea una nueva película asociada al usuario autenticado
+ * @access  Privado (requiere JWT)
+ */
 router.post(
   "/movies",
   authenticateToken,
@@ -31,6 +36,11 @@ router.post(
   }
 );
 
+/**
+ * @route   GET /movies
+ * @desc    Lista películas del usuario autenticado con filtros y paginación
+ * @access  Privado (requiere JWT)
+ */
 router.get(
   "/movies",
   authenticateToken,
@@ -71,6 +81,11 @@ router.get(
   }
 );
 
+/**
+ * @route   GET /movies/:id
+ * @desc    Obtiene los datos de una película específica del usuario
+ * @access  Privado (requiere JWT)
+ */
 router.get(
   "/movies/:id",
   authenticateToken,
@@ -80,7 +95,6 @@ router.get(
 
     try {
       const movie = await getMovieById(Number(id), userId);
-
       res.status(200).json(movie);
     } catch (error: any) {
       if (error.message === "Película no encontrada") {
@@ -92,6 +106,11 @@ router.get(
   }
 );
 
+/**
+ * @route   PUT /movies/:id
+ * @desc    Actualiza una película si pertenece al usuario autenticado
+ * @access  Privado (requiere JWT)
+ */
 router.put(
   "/movies/:id",
   authenticateToken,
@@ -131,6 +150,11 @@ router.put(
   }
 );
 
+/**
+ * @route   DELETE /movies/:id
+ * @desc    Elimina una película si pertenece al usuario autenticado
+ * @access  Privado (requiere JWT)
+ */
 router.delete(
   "/movies/:id",
   authenticateToken,
