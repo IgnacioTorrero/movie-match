@@ -1,234 +1,245 @@
 import request from "supertest";
 import express from "express";
-import movieRouter from "../../routes/movie.routes";
-import { prisma } from "../../services/movie.service";
+import { prisma } from "../../prisma";
 
-jest.mock("../../src/middlewares/auth.middleware", () => ({
-  authenticateToken: (req: any, res: any, next: any) => {
-    req.user = { id: 1 };
-    next();
-  },
-}));
+let app: express.Express;
+let mockCreateMovie: jest.Mock;
+let mockGetMoviesByUser: jest.Mock;
+let mockCountMoviesByUser: jest.Mock;
+let mockUpdateMovie: jest.Mock;
+let mockDeleteMovie: jest.Mock;
+let mockGetMovieById: jest.Mock;
+let mockMovieBelongsToUser: jest.Mock;
 
-jest.mock("../../src/services/movie.service", () => ({
-  createMovie: jest.fn(() => ({
-    id: 1,
-    title: "Test Movie",
-    director: "Test Director",
-    year: 2025,
-    genre: "Test Genre",
-    synopsis: "Test Synopsis",
-  })),
-  getMoviesByUser: jest.fn(() => [
-    {
+beforeAll(() => {
+  mockCreateMovie = jest.fn();
+  mockGetMoviesByUser = jest.fn();
+  mockCountMoviesByUser = jest.fn();
+  mockUpdateMovie = jest.fn();
+  mockDeleteMovie = jest.fn();
+  mockGetMovieById = jest.fn();
+  mockMovieBelongsToUser = jest.fn();
+
+  jest.doMock("../../middlewares/auth.middleware", () => ({
+    authenticateToken: (req: any, res: any, next: any) => {
+      req.user = { id: 1 };
+      next();
+    },
+  }));
+
+  jest.doMock("../../services/movie.service", () => ({
+    createMovie: mockCreateMovie,
+    getMoviesByUser: mockGetMoviesByUser,
+    countMoviesByUser: mockCountMoviesByUser,
+    updateMovie: mockUpdateMovie,
+    deleteMovie: mockDeleteMovie,
+    getMovieById: mockGetMovieById,
+    movieBelongsToUser: mockMovieBelongsToUser,
+  }));
+
+  const movieRouter = require("../../routes/movie.routes").default;
+  const express = require("express");
+  app = express();
+  app.use(express.json());
+  app.use(movieRouter);
+});
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+describe("Movie Routes", () => {
+  test("POST /movies - debería crear una película", async () => {
+    mockCreateMovie.mockResolvedValueOnce({
       id: 1,
       title: "Test Movie",
       director: "Test Director",
       year: 2025,
       genre: "Test Genre",
       synopsis: "Test Synopsis",
-    },
-  ]),
-  countMoviesByUser: jest.fn(() => 1),
-  updateMovie: jest.fn(() => ({
-    id: 1,
-    title: "Updated Movie",
-    director: "Updated Director",
-    year: 2026,
-    genre: "Updated Genre",
-    synopsis: "Updated Synopsis",
-  })),
-  deleteMovie: jest.fn(() => ({
-    id: 1,
-    title: "Deleted Movie",
-  })),
-  prisma: {
-    userMovies: {
-      findFirst: jest.fn(() => true),
-      deleteMany: jest.fn(),
-    },
-    rating: {
-      deleteMany: jest.fn(),
-    },
-    movie: {
-      findFirst: jest.fn(() => ({
+    });
+
+    const res = await request(app).post("/movies").send({
+      title: "Test Movie",
+      director: "Test Director",
+      year: 2025,
+      genre: "Test Genre",
+      synopsis: "Test Synopsis",
+    });
+
+    expect(res.status).toBe(201);
+    expect(res.body.title).toBe("Test Movie");
+  });
+
+  test("GET /movies - debería listar películas", async () => {
+    mockGetMoviesByUser.mockResolvedValueOnce([
+      {
         id: 1,
         title: "Test Movie",
         director: "Test Director",
         year: 2025,
         genre: "Test Genre",
         synopsis: "Test Synopsis",
-        rating: [{ score: 4 }],
-      })),
-    },
-  },
-}));
+      },
+    ]);
+    mockCountMoviesByUser.mockResolvedValueOnce(1);
 
-const app = express();
-app.use(express.json());
-app.use(movieRouter);
+    const res = await request(app).get("/movies");
 
-describe("Movie Routes", () => {
-    test("POST /movies - debería crear una película", async () => {
-        const res = await request(app).post("/movies").send({
-        title: "Test Movie",
-        director: "Test Director",
-        year: 2025,
-        genre: "Test Genre",
-        synopsis: "Test Synopsis",
-        });
+    expect(res.status).toBe(200);
+    expect(res.body.movies.length).toBeGreaterThan(0);
+    expect(res.body.totalMovies).toBe(1);
+  });
 
-        expect(res.status).toBe(201);
-        expect(res.body.title).toBe("Test Movie");
+  test("PUT /movies/:id - debería actualizar una película", async () => {
+    mockMovieBelongsToUser.mockResolvedValueOnce(true);
+    mockUpdateMovie.mockResolvedValueOnce({
+      id: 1,
+      title: "Updated Movie",
+      director: "Updated Director",
+      year: 2026,
+      genre: "Updated Genre",
+      synopsis: "Updated Synopsis",
     });
 
-    test("GET /movies - debería listar películas", async () => {
-        const res = await request(app).get("/movies");
-        expect(res.status).toBe(200);
-        expect(res.body.movies.length).toBeGreaterThan(0);
-        expect(res.body.totalMovies).toBe(1);
+    const res = await request(app).put("/movies/1").send({
+      title: "Updated Movie",
+      director: "Updated Director",
+      year: 2026,
+      genre: "Updated Genre",
+      synopsis: "Updated Synopsis",
     });
 
-    test("PUT /movies/:id - debería actualizar una película", async () => {
-        prisma.userMovies.findFirst = jest.fn(() => true);
+    expect(res.status).toBe(200);
+    expect(res.body.title).toBe("Updated Movie");
+  });
 
-        const res = await request(app).put("/movies/1").send({
-        title: "Updated Movie",
-        director: "Updated Director",
-        year: 2026,
-        genre: "Updated Genre",
-        synopsis: "Updated Synopsis",
-        });
+  test("DELETE /movies/:id - debería eliminar una película", async () => {
+    mockMovieBelongsToUser.mockResolvedValueOnce(true);
+    mockDeleteMovie.mockResolvedValueOnce({ id: 1, title: "Deleted Movie" });
 
-        expect(res.status).toBe(200);
-        expect(res.body.title).toBe("Updated Movie");
+    const res = await request(app).delete("/movies/1");
+
+    expect(res.status).toBe(200);
+    expect(res.body.title).toBe("Deleted Movie");
+  });
+
+  test("GET /movies/:id - debería devolver una película con rating", async () => {
+    mockGetMovieById.mockResolvedValueOnce({
+      id: 1,
+      title: "Test Movie",
+      director: "Test Director",
+      year: 2025,
+      genre: "Test Genre",
+      synopsis: "Test Synopsis",
+      userRating: 4,
     });
 
-    test("DELETE /movies/:id - debería eliminar una película", async () => {
-        prisma.userMovies.findFirst = jest.fn(() => true);
+    const res = await request(app).get("/movies/1");
 
-        const res = await request(app).delete("/movies/1");
-        expect(res.status).toBe(200);
-        expect(res.body.title).toBe("Deleted Movie");
+    expect(res.status).toBe(200);
+    expect(res.body.userRating).toBe(4);
+  });
+
+  test("GET /movies/:id - debería devolver 404 si no existe", async () => {
+    mockGetMovieById.mockImplementationOnce(() => {
+      throw new Error("Película no encontrada");
     });
 
-    test("GET /movies/:id - debería devolver una película con rating", async () => {
-        const res = await request(app).get("/movies/1");
+    const res = await request(app).get("/movies/999");
 
-        expect(res.status).toBe(200);
-        expect(res.body.title).toBe("Test Movie");
-        expect(res.body.userRating).toBe(4);
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe("Movie not found");
+  });
+
+  test("POST /movies - debería manejar error al crear", async () => {
+    mockCreateMovie.mockImplementationOnce(() => {
+      throw new Error("Fallo al crear");
     });
 
-    test("GET /movies/:id - debería devolver 404 si la película no existe", async () => {
-        const originalFindFirst = prisma.movie.findFirst;
-        prisma.movie.findFirst = jest.fn(() => null);
-
-        const res = await request(app).get("/movies/999");
-
-        expect(res.status).toBe(404);
-        expect(res.body.error).toBe("Movie not found");
-
-        prisma.movie.findFirst = originalFindFirst;
+    const res = await request(app).post("/movies").send({
+      title: "Fallida",
+      director: "Error",
+      year: 2025,
+      genre: "Drama",
+      synopsis: "Error",
     });
 
-    test("POST /movies - debería manejar error al crear una película", async () => {
-        const mockCreateMovie = require("../../src/services/movie.service").createMovie;
-        mockCreateMovie.mockImplementationOnce(() => {
-            throw new Error("Fallo al crear");
-        });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Fallo al crear");
+  });
 
-        const res = await request(app).post("/movies").send({
-            title: "Fallida",
-            director: "Error",
-            year: 2025,
-            genre: "Drama",
-            synopsis: "Error en creación",
-        });
-
-        expect(res.status).toBe(400);
-        expect(res.body.error).toBe("Fallo al crear");
+  test("GET /movies - debería manejar error al listar", async () => {
+    mockGetMoviesByUser.mockImplementationOnce(() => {
+      throw new Error("Fallo al listar");
     });
 
-    test("GET /movies - debería manejar error al obtener películas", async () => {
-        const mockGetMoviesByUser = require("../../src/services/movie.service").getMoviesByUser;
-        mockGetMoviesByUser.mockImplementationOnce(() => {
-            throw new Error("Fallo al listar");
-        });
+    const res = await request(app).get("/movies");
 
-        const res = await request(app).get("/movies");
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Fallo al listar");
+  });
 
-        expect(res.status).toBe(400);
-        expect(res.body.error).toBe("Fallo al listar");
+  test("PUT /movies/:id - 404 si no pertenece al usuario", async () => {
+    mockMovieBelongsToUser.mockResolvedValueOnce(false);
+
+    const res = await request(app).put("/movies/99").send({
+      title: "X",
+      director: "X",
+      year: 2024,
+      genre: "X",
+      synopsis: "X",
     });
 
-    test("PUT /movies/:id - debería devolver 404 si la película no pertenece al usuario", async () => {
-        prisma.userMovies.findFirst = jest.fn(() => null);
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe("Movie not found or unauthorized");
+  });
 
-        const res = await request(app).put("/movies/99").send({
-            title: "No existe",
-            director: "Desconocido",
-            year: 2024,
-            genre: "Misterio",
-            synopsis: "No autorizada",
-        });
+  test("DELETE /movies/:id - 404 si no pertenece al usuario", async () => {
+    mockMovieBelongsToUser.mockResolvedValueOnce(false);
 
-        expect(res.status).toBe(404);
-        expect(res.body.error).toBe("Movie not found or unauthorized");
+    const res = await request(app).delete("/movies/99");
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe("Movie not found or unauthorized");
+  });
+
+  test("GET /movies/:id - error inesperado", async () => {
+    mockGetMovieById.mockRejectedValueOnce(new Error("Error inesperado"));
+
+    const res = await request(app).get("/movies/1");
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe("Error inesperado");
+  });
+
+  test("PUT /movies/:id - error inesperado", async () => {
+    mockMovieBelongsToUser.mockResolvedValueOnce(true);
+    mockUpdateMovie.mockImplementationOnce(() => {
+      throw new Error("Fallo en update");
     });
 
-    test("DELETE /movies/:id - debería devolver 404 si la película no pertenece al usuario", async () => {
-        prisma.userMovies.findFirst = jest.fn(() => null);
-
-        const res = await request(app).delete("/movies/99");
-
-        expect(res.status).toBe(404);
-        expect(res.body.error).toBe("Movie not found or unauthorized");
+    const res = await request(app).put("/movies/1").send({
+      title: "Falla",
+      director: "X",
+      year: 2024,
+      genre: "X",
+      synopsis: "Error",
     });
 
-    test("GET /movies/:id - debería manejar error inesperado", async () => {
-        prisma.movie.findFirst = jest.fn(() => {
-            throw new Error("Error inesperado");
-        });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Fallo en update");
+  });
 
-        const res = await request(app).get("/movies/1");
-
-        expect(res.status).toBe(500);
-        expect(res.body.error).toBe("Error inesperado");
+  test("DELETE /movies/:id - error inesperado", async () => {
+    mockMovieBelongsToUser.mockResolvedValueOnce(true);
+    mockDeleteMovie.mockImplementationOnce(() => {
+      throw new Error("Fallo al borrar");
     });
 
-    test("PUT /movies/:id - debería manejar error inesperado", async () => {
-        prisma.userMovies.findFirst = jest.fn(() => ({ id: 1 }));
-        const mockUpdateMovie = require("../../src/services/movie.service").updateMovie;
-        mockUpdateMovie.mockImplementationOnce(() => {
-            throw new Error("Fallo en update");
-        });
+    const res = await request(app).delete("/movies/1");
 
-        const res = await request(app).put("/movies/1").send({
-            title: "Falla",
-            director: "Prueba",
-            year: 2024,
-            genre: "Terror",
-            synopsis: "Error",
-        });
-
-        expect(res.status).toBe(400);
-        expect(res.body.error).toBe("Fallo en update");
-    });
-
-    test("DELETE /movies/:id - debería manejar error inesperado", async () => {
-        prisma.userMovies.findFirst = jest.fn(() => ({ id: 1 }));
-        prisma.rating.deleteMany = jest.fn();
-        prisma.userMovies.deleteMany = jest.fn();
-
-        const mockDeleteMovie = require("../../src/services/movie.service").deleteMovie;
-        mockDeleteMovie.mockImplementationOnce(() => {
-            throw new Error("Fallo al borrar");
-        });
-
-        const res = await request(app).delete("/movies/1");
-
-        expect(res.status).toBe(400);
-        expect(res.body.error).toBe("Fallo al borrar");
-    });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Fallo al borrar");
+  });
 });

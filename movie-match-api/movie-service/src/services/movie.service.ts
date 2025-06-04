@@ -1,9 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
 
-export const prisma = new PrismaClient();
-
-// Crear película asociada al usuario
 const createMovie = async (
   userId: number,
   title: string,
@@ -11,9 +8,9 @@ const createMovie = async (
   year: number,
   genre: string,
   synopsis?: string
-) => {
+): Promise<any> => {
   try {
-    const movie = await prisma.movie.create({
+    return await prisma.movie.create({
       data: {
         title,
         director,
@@ -26,19 +23,17 @@ const createMovie = async (
         },
       },
     });
-    return movie;
   } catch (error: any) {
     throw new Error(`Error al crear la película: ${error.message}`);
   }
 };
 
-// Obtener películas del usuario con filtros y paginación
 export const getMoviesByUser = async (
   userId: number,
-  filters: any,
+  filters: Record<string, any>,
   take: number,
   skip: number
-) => {
+): Promise<any[]> => {
   return await prisma.movie.findMany({
     where: {
       AND: [
@@ -56,8 +51,10 @@ export const getMoviesByUser = async (
   });
 };
 
-// Contar películas del usuario que cumplen filtros
-const countMoviesByUser = async (userId: number, filters: any) => {
+const countMoviesByUser = async (
+  userId: number,
+  filters: Record<string, any>
+): Promise<number> => {
   return await prisma.movie.count({
     where: {
       AND: [
@@ -72,19 +69,27 @@ const countMoviesByUser = async (userId: number, filters: any) => {
   });
 };
 
-// Obtener película por ID verificando usuario
-const getMovieById = async (id: number, userId: number) => {
+const getMovieById = async (
+  id: number,
+  userId: number
+): Promise<any> => {
   const movie = await prisma.movie.findFirst({
     where: {
       id,
-      userMovies: { some: { userId } },
+      userMovies: {
+        some: { userId },
+      },
     },
     include: {
-      rating: { where: { userId }, select: { score: true } },
+      rating: {
+        where: { userId },
+        select: { score: true },
+      },
     },
   });
 
   if (!movie) throw new Error("Película no encontrada");
+
   const userRating = movie.rating.length > 0 ? movie.rating[0].score : "No hay rate";
   const { rating, ...movieWithoutRatings } = movie;
 
@@ -94,7 +99,16 @@ const getMovieById = async (id: number, userId: number) => {
   };
 };
 
-// Actualizar película
+const movieBelongsToUser = async (
+  movieId: number,
+  userId: number
+): Promise<boolean> => {
+  const result = await prisma.userMovies.findFirst({
+    where: { movieId, userId },
+  });
+  return !!result;
+};
+
 const updateMovie = async (
   id: number,
   title: string,
@@ -102,7 +116,7 @@ const updateMovie = async (
   year: number,
   genre: string,
   synopsis?: string
-) => {
+): Promise<any> => {
   return await prisma.movie.update({
     where: { id },
     data: {
@@ -116,32 +130,20 @@ const updateMovie = async (
   });
 };
 
-// Eliminar película
-const deleteMovie = async (id: number) => {
+const deleteMovie = async (id: number): Promise<any> => {
   try {
-    // Buscar los userId relacionados a la película
     const userRelations = await prisma.userMovies.findMany({
       where: { movieId: id },
       select: { userId: true },
     });
 
-    // Borrar calificaciones y relaciones
-    await prisma.rating.deleteMany({
-      where: { movieId: id },
-    });
+    await prisma.rating.deleteMany({ where: { movieId: id } });
+    await prisma.userMovies.deleteMany({ where: { movieId: id } });
 
-    await prisma.userMovies.deleteMany({
-      where: { movieId: id },
-    });
+    const deleted = await prisma.movie.delete({ where: { id } });
 
-    // Borrar la película
-    const deleted = await prisma.movie.delete({
-      where: { id },
-    });
-
-    // Limpiar caché de recomendaciones por cada usuario afectado
-    for (const relation of userRelations) {
-      await redis.del(`recommendations:${relation.userId}`);
+    for (const { userId } of userRelations) {
+      await redis.del(`recommendations:${userId}`);
     }
 
     return deleted;
@@ -156,6 +158,7 @@ export {
   getMoviesByUser as getMovies,
   countMoviesByUser,
   getMovieById,
+  movieBelongsToUser,
   updateMovie,
   deleteMovie
 };

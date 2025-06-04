@@ -8,7 +8,7 @@ const router = Router();
  * @desc    Obtiene los datos públicos del usuario por ID
  * @access  Público o Autenticado (según protección futura)
  */
-router.get("/api/users/:id", async (req: Request, res: Response): Promise<void> => {
+router.get("/:id", async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = Number(req.params.id);
 

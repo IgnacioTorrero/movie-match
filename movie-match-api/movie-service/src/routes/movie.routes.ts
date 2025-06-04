@@ -7,13 +7,13 @@ import {
   countMoviesByUser,
   updateMovie,
   deleteMovie,
+  getMovieById,
+  movieBelongsToUser
 } from "../services/movie.service";
 import { authenticateToken } from "../middlewares/auth.middleware";
-import { prisma } from "../services/movie.service";
 
 const router = Router();
 
-// Ruta para crear película
 router.post(
   "/movies",
   authenticateToken,
@@ -21,14 +21,9 @@ router.post(
   async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req as any).user.id;
-      const newMovie = await createMovie(
-        userId,
-        req.body.title,
-        req.body.director,
-        req.body.year,
-        req.body.genre,
-        req.body.synopsis
-      );
+      const { title, director, year, genre, synopsis } = req.body;
+
+      const newMovie = await createMovie(userId, title, director, year, genre, synopsis);
       res.status(201).json(newMovie);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -36,7 +31,6 @@ router.post(
   }
 );
 
-// Ruta para obtener películas del usuario con filtros y paginación
 router.get(
   "/movies",
   authenticateToken,
@@ -51,17 +45,19 @@ router.get(
       };
       const userId = (req as any).user.id;
 
-      const filters: any = {};
-      if (genre) filters.genre = { contains: genre as string };
-      if (director) filters.director = { contains: director as string };
+      const filters: Record<string, any> = {};
+      if (genre) filters.genre = { contains: genre };
+      if (director) filters.director = { contains: director };
       if (year) filters.year = Number(year);
 
       const pageNumber = Math.max(1, Number(page));
       const pageSize = Math.max(1, Number(limit));
       const skip = (pageNumber - 1) * pageSize;
 
-      const movies = await getMoviesByUser(userId, filters, pageSize, skip);
-      const totalMovies = await countMoviesByUser(userId, filters);
+      const [movies, totalMovies] = await Promise.all([
+        getMoviesByUser(userId, filters, pageSize, skip),
+        countMoviesByUser(userId, filters),
+      ]);
 
       res.status(200).json({
         totalMovies,
@@ -75,7 +71,6 @@ router.get(
   }
 );
 
-// Ruta para obtener película por ID (solo si pertenece al usuario)
 router.get(
   "/movies/:id",
   authenticateToken,
@@ -84,27 +79,19 @@ router.get(
     const userId = (req as any).user.id;
 
     try {
-      const movie = await prisma.movie.findFirst({
-        where: { id: Number(id), userMovies: { some: { userId } } },
-        include: { rating: { where: { userId }, select: { score: true } } },
-      });
+      const movie = await getMovieById(Number(id), userId);
 
-      if (!movie) {
-        res.status(404).json({ error: "Movie not found" });
-        return;
-      }
-
-      const userRating = movie.rating.length ? movie.rating[0].score : "No hay rate";
-      const { rating, ...movieWithoutRatings } = movie;
-
-      res.status(200).json({ ...movieWithoutRatings, userRating });
+      res.status(200).json(movie);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      if (error.message === "Película no encontrada") {
+        res.status(404).json({ error: "Movie not found" });
+      } else {
+        res.status(500).json({ error: error.message });
+      }
     }
   }
 );
 
-// Ruta para actualizar película (solo si pertenece al usuario)
 router.put(
   "/movies/:id",
   authenticateToken,
@@ -113,10 +100,7 @@ router.put(
     const userId = (req as any).user.id;
 
     try {
-      const exists = await prisma.userMovies.findFirst({
-        where: { movieId: Number(id), userId },
-      });
-
+      const exists = await movieBelongsToUser(Number(id), userId);
       if (!exists) {
         res.status(404).json({ error: "Movie not found or unauthorized" });
         return;
@@ -125,7 +109,9 @@ router.put(
       const { title, director, year, genre, synopsis } = req.body;
 
       if (!title || !director || !year || !genre) {
-        res.status(400).json({ error: "Todos los campos son obligatorios excepto sinopsis." });
+        res.status(400).json({
+          error: "Todos los campos son obligatorios excepto sinopsis.",
+        });
         return;
       }
 
@@ -145,7 +131,6 @@ router.put(
   }
 );
 
-// Ruta para eliminar película (solo si pertenece al usuario)
 router.delete(
   "/movies/:id",
   authenticateToken,
@@ -154,19 +139,13 @@ router.delete(
     const userId = (req as any).user.id;
 
     try {
-      const exists = await prisma.userMovies.findFirst({
-        where: { movieId: Number(id), userId },
-      });
-
+      const exists = await movieBelongsToUser(Number(id), userId);
       if (!exists) {
         res.status(404).json({ error: "Movie not found or unauthorized" });
         return;
       }
 
-      await prisma.rating.deleteMany({ where: { movieId: Number(id) } });
-      await prisma.userMovies.deleteMany({ where: { movieId: Number(id) } });
       const deletedMovie = await deleteMovie(Number(id));
-
       res.status(200).json(deletedMovie);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
