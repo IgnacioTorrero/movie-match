@@ -1,5 +1,6 @@
 import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
+import { Movie, MovieWithUserRating } from "../movie";
 
 /**
  * Crea una nueva película y la asocia al usuario que la crea.
@@ -19,7 +20,7 @@ const createMovie = async (
   year: number,
   genre: string,
   synopsis?: string
-): Promise<any> => {
+): Promise<Movie> => {
   try {
     return await prisma.movie.create({
       data: {
@@ -54,7 +55,7 @@ export const getMoviesByUser = async (
   filters: Record<string, any>,
   take: number,
   skip: number
-): Promise<any[]> => {
+): Promise<Movie[]> => {
   return await prisma.movie.findMany({
     where: {
       AND: [
@@ -109,7 +110,7 @@ const countMoviesByUser = async (
 const getMovieById = async (
   id: number,
   userId: number
-): Promise<any> => {
+): Promise<MovieWithUserRating> => {
   const movie = await prisma.movie.findFirst({
     where: {
       id,
@@ -171,7 +172,7 @@ const updateMovie = async (
   year: number,
   genre: string,
   synopsis?: string
-): Promise<any> => {
+): Promise<Movie> => {
   return await prisma.movie.update({
     where: { id },
     data: {
@@ -192,7 +193,7 @@ const updateMovie = async (
  * @param id - ID de la película
  * @returns Película eliminada
  */
-const deleteMovie = async (id: number): Promise<any> => {
+const deleteMovie = async (id: number): Promise<Movie> => {
   try {
     const userRelations = await prisma.userMovies.findMany({
       where: { movieId: id },
