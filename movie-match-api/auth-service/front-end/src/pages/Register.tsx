@@ -16,50 +16,50 @@ export default function Register() {
       const res = await fetch('http://localhost:3005/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
       const data = await res.json();
       if (!res.ok) {
-        const errMsg = Array.isArray(data.error)
+        const msg = Array.isArray(data.error)
           ? data.error.map((e: any) => e.message).join(', ')
           : data.error || 'Error';
-        throw new Error(errMsg);
-      }      
+        throw new Error(msg);
+      }
       setUser(data);
       setError('');
       setForm({ name: '', email: '', password: '' });
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        if (err.message.includes('[object')) {
-          setError('Error de validación. Verificá los campos ingresados.');
-        } else {
-          setError(err.message);
-        }
-      } else {
-        setError('Error desconocido');
-      }
-    }      
+      const msg = err instanceof Error
+        ? err.message.includes('[object') ? 'Error de validación. Verificá los campos ingresados.' : err.message
+        : 'Error desconocido';
+      setError(msg);
+    }
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Registro</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-semibold mb-6 text-center text-gray-800">Registro</h1>
         <input className="w-full p-2 mb-2 border rounded" placeholder="Nombre" name="name" value={form.name} onChange={handleChange} />
         <input className="w-full p-2 mb-2 border rounded" placeholder="Email" name="email" value={form.email} onChange={handleChange} />
-        <input className="w-full p-2 mb-4 border rounded" placeholder="Password" name="password" type="password" value={form.password} onChange={handleChange} />
-        <div className="flex justify-between">
-          <button className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded" onClick={() => navigate('/')}>Volver</button>
+        <input className="w-full p-2 mb-4 border rounded" placeholder="Password" type="password" name="password" value={form.password} onChange={handleChange} />
+        <div className="flex justify-between gap-4">
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+            onClick={() => navigate('/')}
+          >
+            Volver
+          </button>
+          <button
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
             onClick={register}
             disabled={!form.name || !form.email || !form.password}
           >
             Registrarse
           </button>
         </div>
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-        {user && <p className="text-green-600 mt-2 text-sm">Registrado como: {user.email}</p>}
+        {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
+        {user && <p className="text-green-600 mt-2 text-sm text-center">Registrado como: {user.email}</p>}
       </div>
     </div>
   );
