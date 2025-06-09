@@ -1,9 +1,18 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
+import { Movie, MovieWithUserRating } from "../movie";
 
-export const prisma = new PrismaClient();
-
-// Crear película asociada al usuario
+/**
+ * Crea una nueva película y la asocia al usuario que la crea.
+ * 
+ * @param userId - ID del usuario que crea la película
+ * @param title - Título de la película
+ * @param director - Director de la película
+ * @param year - Año de estreno
+ * @param genre - Género
+ * @param synopsis - Sinopsis (opcional)
+ * @returns Objeto de la película creada
+ */
 const createMovie = async (
   userId: number,
   title: string,
@@ -11,9 +20,9 @@ const createMovie = async (
   year: number,
   genre: string,
   synopsis?: string
-) => {
+): Promise<Movie> => {
   try {
-    const movie = await prisma.movie.create({
+    return await prisma.movie.create({
       data: {
         title,
         director,
@@ -26,19 +35,27 @@ const createMovie = async (
         },
       },
     });
-    return movie;
   } catch (error: any) {
     throw new Error(`Error al crear la película: ${error.message}`);
   }
 };
 
-// Obtener películas del usuario con filtros y paginación
+/**
+ * Devuelve una lista paginada de películas asociadas a un usuario,
+ * permitiendo aplicar filtros por campo.
+ * 
+ * @param userId - ID del usuario
+ * @param filters - Filtros aplicables (género, director, año, etc.)
+ * @param take - Cantidad de resultados por página
+ * @param skip - Cantidad de resultados a omitir (para paginación)
+ * @returns Lista de películas
+ */
 export const getMoviesByUser = async (
   userId: number,
-  filters: any,
+  filters: Record<string, any>,
   take: number,
   skip: number
-) => {
+): Promise<Movie[]> => {
   return await prisma.movie.findMany({
     where: {
       AND: [
@@ -56,8 +73,18 @@ export const getMoviesByUser = async (
   });
 };
 
-// Contar películas del usuario que cumplen filtros
-const countMoviesByUser = async (userId: number, filters: any) => {
+/**
+ * Cuenta la cantidad total de películas que coinciden con los filtros
+ * y pertenecen al usuario.
+ * 
+ * @param userId - ID del usuario
+ * @param filters - Filtros aplicables
+ * @returns Número total de películas encontradas
+ */
+const countMoviesByUser = async (
+  userId: number,
+  filters: Record<string, any>
+): Promise<number> => {
   return await prisma.movie.count({
     where: {
       AND: [
@@ -72,19 +99,35 @@ const countMoviesByUser = async (userId: number, filters: any) => {
   });
 };
 
-// Obtener película por ID verificando usuario
-const getMovieById = async (id: number, userId: number) => {
+/**
+ * Obtiene una película por su ID, validando que pertenezca al usuario.
+ * También devuelve el puntaje que le dio ese usuario si existe.
+ * 
+ * @param id - ID de la película
+ * @param userId - ID del usuario autenticado
+ * @returns Objeto de la película con posible score del usuario
+ */
+const getMovieById = async (
+  id: number,
+  userId: number
+): Promise<MovieWithUserRating> => {
   const movie = await prisma.movie.findFirst({
     where: {
       id,
-      userMovies: { some: { userId } },
+      userMovies: {
+        some: { userId },
+      },
     },
     include: {
-      rating: { where: { userId }, select: { score: true } },
+      rating: {
+        where: { userId },
+        select: { score: true },
+      },
     },
   });
 
   if (!movie) throw new Error("Película no encontrada");
+
   const userRating = movie.rating.length > 0 ? movie.rating[0].score : "No hay rate";
   const { rating, ...movieWithoutRatings } = movie;
 
@@ -94,7 +137,34 @@ const getMovieById = async (id: number, userId: number) => {
   };
 };
 
-// Actualizar película
+/**
+ * Verifica si una película pertenece al usuario autenticado.
+ * 
+ * @param movieId - ID de la película
+ * @param userId - ID del usuario
+ * @returns true si pertenece, false si no
+ */
+const movieBelongsToUser = async (
+  movieId: number,
+  userId: number
+): Promise<boolean> => {
+  const result = await prisma.userMovies.findFirst({
+    where: { movieId, userId },
+  });
+  return !!result;
+};
+
+/**
+ * Actualiza una película existente. Solo se ejecuta si pertenece al usuario.
+ * 
+ * @param id - ID de la película
+ * @param title - Nuevo título
+ * @param director - Nuevo director
+ * @param year - Nuevo año
+ * @param genre - Nuevo género
+ * @param synopsis - Nueva sinopsis (opcional)
+ * @returns Película actualizada
+ */
 const updateMovie = async (
   id: number,
   title: string,
@@ -102,7 +172,7 @@ const updateMovie = async (
   year: number,
   genre: string,
   synopsis?: string
-) => {
+): Promise<Movie> => {
   return await prisma.movie.update({
     where: { id },
     data: {
@@ -116,32 +186,28 @@ const updateMovie = async (
   });
 };
 
-// Eliminar película
-const deleteMovie = async (id: number) => {
+/**
+ * Elimina una película, sus relaciones con usuarios y sus calificaciones.
+ * Limpia la caché de recomendaciones en Redis para todos los usuarios vinculados.
+ * 
+ * @param id - ID de la película
+ * @returns Película eliminada
+ */
+const deleteMovie = async (id: number): Promise<Movie> => {
   try {
-    // Buscar los userId relacionados a la película
     const userRelations = await prisma.userMovies.findMany({
       where: { movieId: id },
       select: { userId: true },
     });
 
-    // Borrar calificaciones y relaciones
-    await prisma.rating.deleteMany({
-      where: { movieId: id },
-    });
+    await prisma.rating.deleteMany({ where: { movieId: id } });
+    await prisma.userMovies.deleteMany({ where: { movieId: id } });
 
-    await prisma.userMovies.deleteMany({
-      where: { movieId: id },
-    });
+    const deleted = await prisma.movie.delete({ where: { id } });
 
-    // Borrar la película
-    const deleted = await prisma.movie.delete({
-      where: { id },
-    });
-
-    // Limpiar caché de recomendaciones por cada usuario afectado
-    for (const relation of userRelations) {
-      await redis.del(`recommendations:${relation.userId}`);
+    // Limpiar caché de recomendaciones de todos los usuarios asociados
+    for (const { userId } of userRelations) {
+      await redis.del(`recommendations:${userId}`);
     }
 
     return deleted;
@@ -151,11 +217,13 @@ const deleteMovie = async (id: number) => {
   }
 };
 
+// Exportación explícita para mayor control
 export {
   createMovie,
   getMoviesByUser as getMovies,
   countMoviesByUser,
   getMovieById,
+  movieBelongsToUser,
   updateMovie,
   deleteMovie
 };

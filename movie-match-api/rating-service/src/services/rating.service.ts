@@ -1,7 +1,20 @@
 import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
 
-export const rateMovie = async (userId: number, movieId: number, score: number) => {
+/**
+ * Crea o actualiza una calificación para una película determinada por un usuario.
+ * 
+ * @param userId - ID del usuario que califica
+ * @param movieId - ID de la película a calificar
+ * @param score - Puntuación entre 1 y 5
+ * @returns Calificación creada o actualizada
+ * @throws Error si los datos son inválidos o hay problemas con la base de datos
+ */
+export const rateMovie = async (
+  userId: number,
+  movieId: number,
+  score: number
+): Promise<{ id: number; userId: number; movieId: number; score: number }> => {
   if (score < 1 || score > 5) {
     throw new Error("La calificación debe estar entre 1 y 5 estrellas.");
   }
@@ -9,7 +22,7 @@ export const rateMovie = async (userId: number, movieId: number, score: number) 
   if (!userId || !movieId) {
     throw new Error("El ID de usuario y el ID de película son requeridos.");
   }
-  
+
   const movie = await prisma.movie.findUnique({ where: { id: movieId } });
   if (!movie) {
     throw new Error("La película no existe.");
@@ -23,7 +36,7 @@ export const rateMovie = async (userId: number, movieId: number, score: number) 
     try {
       const updated = await prisma.rating.update({
         where: { id: existingRating.id },
-        data: { score }
+        data: { score },
       });
 
       await redis.del(`recommendations:${userId}`);

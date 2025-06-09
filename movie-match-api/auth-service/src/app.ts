@@ -20,10 +20,9 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
-app.use(errorHandler);
-if (userRoutes) {
-  app.use(userRoutes);
-}
+app.use("/api/users", userRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use(errorHandler);
 
 export default app;

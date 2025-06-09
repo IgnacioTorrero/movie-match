@@ -65,7 +65,7 @@ jest.mock("@prisma/client", () => {
 });
 
 // Mock de redis
-jest.mock("../../src/utils/redisClient", () => ({
+jest.mock("../../utils/redisClient", () => ({
   del: jest.fn(),
 }));
 

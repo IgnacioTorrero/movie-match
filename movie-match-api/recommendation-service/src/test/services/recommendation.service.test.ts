@@ -26,7 +26,7 @@ const { PrismaClient } = jest.requireMock("@prisma/client") as any;
 const prismaInstance = new PrismaClient();
 const { ratingFindManyMock, movieFindManyMock } = prismaInstance.__MOCS__;
 
-jest.mock("../../src/utils/redisClient", () => ({
+jest.mock("../../utils/redisClient", () => ({
   __esModule: true,
   default: {
     get: jest.fn<() => Promise<string | null>>().mockResolvedValue(null),
@@ -34,63 +34,15 @@ jest.mock("../../src/utils/redisClient", () => ({
   },
 }));
 
-describe("Recommendation Service", () => {
-  const redis = require("../../src/utils/redisClient").default;
+const redis = require("../../utils/redisClient").default;
 
+describe("Recommendation Service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     redis.get.mockResolvedValue(null);
   });
 
-  test("Debe recomendar películas basadas en el género favorito del usuario", async () => {
-    const userId = 1;
-
-    ratingFindManyMock.mockResolvedValue([
-      { id: 1, userId, score: 5, movie: { id: 101, genre: "Action/Adventure" } },
-      { id: 2, userId, score: 4, movie: { id: 102, genre: "Action/Sci-Fi" } },
-      { id: 3, userId, score: 4, movie: { id: 103, genre: "Action" } },
-    ]);
-
-    movieFindManyMock.mockResolvedValue([
-      { id: 201, title: "Mad Max: Fury Road", genre: "Action", createdAt: new Date(), director: "George Miller", year: 2015, synopsis: "Post-apocalyptic action", updatedAt: new Date() },
-      { id: 301, title: "The Dark Knight", genre: "Action", createdAt: new Date(), director: "Christopher Nolan", year: 2008, synopsis: "Batman fights the Joker", updatedAt: new Date() },
-    ]);
-
-    const recommendations = await getRecommendedMovies(userId);
-
-    if (Array.isArray(recommendations)) {
-      expect(recommendations.length).toBeGreaterThan(0);
-      expect(recommendations.some((m: any) => m.title === "Mad Max: Fury Road")).toBeTruthy();
-    } else {
-      throw new Error("Expected array, but received message object.");
-    }
-  });
-
-  test("Debe devolver un mensaje si el usuario no tiene suficientes calificaciones", async () => {
-    const userId = 2;
-
-    ratingFindManyMock.mockResolvedValue([]);
-
-    const recommendations = await getRecommendedMovies(userId);
-
-    expect(recommendations).toEqual({ message: "No hay suficientes datos para recomendar películas." });
-  });
-
-  test("Debe devolver un mensaje si no se encuentran recomendaciones", async () => {
-    const userId = 3;
-
-    ratingFindManyMock.mockResolvedValue([
-      { movie: { id: 104, genre: "Drama" } },
-    ]);
-
-    movieFindManyMock.mockResolvedValue([]);
-
-    const recommendations = await getRecommendedMovies(userId);
-
-    expect(recommendations).toEqual({ message: "No se encontraron recomendaciones nuevas." });
-  });
-
-  test("Debe devolver recomendaciones desde caché si están disponibles", async () => {
+  test("Devuelve recomendaciones desde caché si están disponibles", async () => {
     const userId = 4;
     const cachedMovies = [{ id: 401, title: "Película en caché", genre: "Action" }];
     redis.get.mockResolvedValueOnce(JSON.stringify(cachedMovies));
@@ -101,23 +53,76 @@ describe("Recommendation Service", () => {
     expect(result).toEqual(cachedMovies);
   });
 
-  test("Debe devolver mensaje si las películas no tienen género válido", async () => {
-    const userId = 5;
+  test("Recomienda películas basadas en género favorito", async () => {
+    const userId = 1;
+
     ratingFindManyMock.mockResolvedValue([
-      { movie: { id: 999, genre: "" } }
+      { id: 1, userId, score: 5, movie: { id: 101, genre: "Action/Adventure" } },
+      { id: 2, userId, score: 4, movie: { id: 102, genre: "Action/Sci-Fi" } },
+      { id: 3, userId, score: 4, movie: { id: 103, genre: "Action" } },
     ]);
 
-    const recommendations = await getRecommendedMovies(userId);
+    movieFindManyMock.mockResolvedValue([
+      {
+        id: 201,
+        title: "Mad Max: Fury Road",
+        genre: "Action",
+        createdAt: new Date(),
+        director: "George Miller",
+        year: 2015,
+        synopsis: "Post-apocalyptic action",
+        updatedAt: new Date(),
+      },
+    ]);
 
-    expect(recommendations).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+    const result = await getRecommendedMovies(userId);
+
+    expect(result).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: "Mad Max: Fury Road" }),
+      ])
+    );
+    expect(redis.set).toHaveBeenCalled();
   });
 
-  test("Debe manejar errores inesperados y lanzar error genérico", async () => {
-    const userId = 6;
-    ratingFindManyMock.mockRejectedValue(new Error("Fallo Prisma"));
+  test("Devuelve mensaje si el usuario no tiene suficientes calificaciones", async () => {
+    ratingFindManyMock.mockResolvedValue([]);
 
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-    await expect(getRecommendedMovies(userId)).rejects.toThrow("Error al acceder a la base de datos.");
-    consoleErrorSpy.mockRestore();
+    const result = await getRecommendedMovies(2);
+
+    expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+  });
+
+  test("Devuelve mensaje si ninguna película tiene género válido", async () => {
+    ratingFindManyMock.mockResolvedValue([{ movie: { id: 999, genre: "" } }]);
+
+    const result = await getRecommendedMovies(5);
+
+    expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+  });
+
+  test("Devuelve mensaje si no se encuentran recomendaciones nuevas", async () => {
+    ratingFindManyMock.mockResolvedValue([{ movie: { id: 104, genre: "Drama" } }]);
+    movieFindManyMock.mockResolvedValue([]);
+
+    const result = await getRecommendedMovies(3);
+
+    expect(result).toEqual({ message: "No se encontraron recomendaciones nuevas." });
+  });
+
+  test("Devuelve mensaje si no se encuentran géneros para recomendar", async () => {
+    ratingFindManyMock.mockResolvedValue([{ movie: { id: 888, genre: "" } }]);
+
+    const result = await getRecommendedMovies(6);
+
+    expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+  });
+
+  test("Maneja error de Prisma y lanza error genérico", async () => {
+    ratingFindManyMock.mockRejectedValue(new Error("Fallo Prisma"));
+    const spy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(getRecommendedMovies(7)).rejects.toThrow("Error al acceder a la base de datos.");
+    spy.mockRestore();
   });
 });

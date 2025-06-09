@@ -7,33 +7,31 @@ import { validateUser } from "../utils/validateUser";
 
 const router = Router();
 
-router.post("/rate", authenticateToken, validate(ratingSchema), async (req: Request, res: Response): Promise<void> => {
-  const { movieId, score } = req.body;
-  const userId = (req as any).user?.id;
-  
-  if (!userId) {
-    res.status(401).json({ error: "Unauthorized - No user found" });
-    return;
-  }
+/**
+ * @route   POST /rate
+ * @desc    Registra o actualiza una calificación para una película
+ * @access  Privado (requiere JWT)
+ */
+router.post(
+  "/rate",
+  authenticateToken,
+  validate(ratingSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const { movieId, score } = req.body;
+    const userId = (req as any).user?.id;
 
-  if (!movieId || typeof score !== 'number') {
-    res.status(400).json({ error: "Movie ID and score are required." });
-    return;
-  }
+    try {
+      if (!userId || isNaN(userId) || !(await validateUser(userId))) {
+        res.status(401).json({ error: "Unauthorized or invalid user." });
+        return;
+      }
 
-  if (!userId || isNaN(userId) || !(await validateUser(userId))) {
-    res.status(400).json({ error: "El usuario no existe o es inválido." });
-    return;
+      const rating = await rateMovie(userId, movieId, score);
+      res.status(200).json(rating);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   }
-
-  try {
-    const rating = await rateMovie(userId, movieId, score);
-    res.status(200).json(rating);
-    return;
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
-    return;
-  }
-});
+);
 
 export default router;

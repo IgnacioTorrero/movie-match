@@ -1,3 +1,5 @@
+process.env.JWT_SECRET = "test-secret";
+
 import { registerUser, loginUser } from "../../services/auth.service";
 import jwt from "jsonwebtoken";
 
@@ -7,15 +9,15 @@ jest.mock("@prisma/client", () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
       user: {
-        create: jest.fn((data) => ({
+        create: jest.fn(({ data }) => ({
           id: 1,
-          ...data.data,
-          password: bcrypt.hashSync(data.data.password, 12),
+          ...data,
+          password: bcrypt.hashSync(data.password, 12),
           createdAt: new Date(),
           updatedAt: new Date(),
         })),
-        findUnique: jest.fn((query) => {
-          if (query.where.email === "john@example.com") {
+        findUnique: jest.fn(({ where }) => {
+          if (where.email === "john@example.com") {
             return {
               id: 1,
               name: "John Doe",
