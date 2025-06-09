@@ -2,14 +2,22 @@ import { prisma } from "../prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Clave secreta para JWT
+// Clave secreta utilizada para firmar los tokens JWT
 const SECRET_KEY = process.env.JWT_SECRET!;
 if (!SECRET_KEY) throw new Error("JWT_SECRET is required");
 
 const SALT_ROUNDS = 12;
 
 /**
- * Registra un nuevo usuario con nombre, email y contraseña hasheada.
+ * Registra un nuevo usuario en la base de datos.
+ * 
+ * Hashea la contraseña utilizando bcrypt antes de guardar el registro.
+ * Normaliza el email a minúsculas y limpia espacios en blanco del nombre y email.
+ * 
+ * @param name - Nombre del usuario
+ * @param email - Email del usuario
+ * @param password - Contraseña en texto plano
+ * @returns Objeto del usuario creado
  */
 export const registerUser = async (
   name: string,
@@ -31,7 +39,15 @@ export const registerUser = async (
 };
 
 /**
- * Autentica a un usuario y retorna un token JWT junto con los datos del usuario.
+ * Autentica a un usuario existente con email y contraseña.
+ * 
+ * Compara la contraseña proporcionada con la contraseña hasheada almacenada.
+ * Si la autenticación es exitosa, genera y retorna un token JWT firmado.
+ * 
+ * @param email - Email del usuario
+ * @param password - Contraseña en texto plano
+ * @returns Objeto que contiene el token JWT y los datos básicos del usuario
+ * @throws Error si las credenciales son inválidas
  */
 export const loginUser = async (
   email: string,
