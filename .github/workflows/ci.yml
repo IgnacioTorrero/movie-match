@@ -23,14 +23,12 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: |
-          cd movie-match-api/${{ matrix.service }}
-          npm ci
+        run: npm ci
+        working-directory: movie-match-api/${{ matrix.service }}
 
       - name: Run tests
-        run: |
-          cd movie-match-api/${{ matrix.service }}
-          npm run test
+        run: npm run test
+        working-directory: movie-match-api/${{ matrix.service }}
 
       - name: Build Docker image
         run: |
