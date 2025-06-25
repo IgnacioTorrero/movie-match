@@ -24,14 +24,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd ${{ matrix.service }}
+          cd movie-match-api/${{ matrix.service }}
           npm ci
 
       - name: Run tests
         run: |
-          cd ${{ matrix.service }}
+          cd movie-match-api/${{ matrix.service }}
           npm run test
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ matrix.service }} -f ${{ matrix.service }}/Dockerfile .
+          docker build -t ${{ matrix.service }} -f movie-match-api/${{ matrix.service }}/Dockerfile .
