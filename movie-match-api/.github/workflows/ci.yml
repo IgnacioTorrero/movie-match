@@ -2,9 +2,9 @@ name: Build & Test Backends
 
 on:
   push:
-    branches: [ci-github-actions]
+    branches: [github-actions]
   pull_request:
-    branches: [ci-github-actions]
+    branches: [github-actions]
 
 jobs:
   build:
