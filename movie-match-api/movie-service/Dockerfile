@@ -1,25 +1,27 @@
+# Etapa 1: Builder
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY movie-service/package*.json ./
+RUN npm ci
+
+COPY movie-service/ ./
+COPY prisma ./prisma
+
+RUN npm run build && npx prisma generate
+
+# Etapa 2: Imagen final mínima
 FROM node:20-alpine
 
 WORKDIR /app
 
-ENV PRISMA_CLI_QUERY_ENGINE_TYPE="binary"
-
-COPY movie-service/package*.json ./
-RUN npm install
-
-COPY movie-service/. ./
-COPY prisma ./prisma
-
-COPY movie-service/swagger/swagger.yaml /app/swagger.yaml
-
-RUN npm install -g typescript && \
-    npm install rimraf && \
-    chmod +x ./node_modules/.bin/rimraf && \
-    ./node_modules/.bin/rimraf dist && \
-    tsc && \
-    chmod +x ./node_modules/.bin/prisma && \
-    npx prisma generate --schema=./prisma/schema.prisma
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY movie-service/swagger/swagger.yaml ./swagger.yaml
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node dist/server.js"]
+CMD ["node", "dist/server.js"]

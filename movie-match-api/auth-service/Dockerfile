@@ -1,4 +1,4 @@
-# Builder
+# Etapa 1: Builder
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY auth-service/package*.json ./
@@ -8,7 +8,7 @@ COPY prisma ./prisma
 RUN npm run build && npx prisma generate
 RUN npm prune --production
 
-# Final
+# Etapa 2: Imagen final mínima
 FROM node:20-alpine
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
