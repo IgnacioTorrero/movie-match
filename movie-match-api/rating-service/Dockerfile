@@ -11,9 +11,14 @@ RUN npm run build && npx prisma generate
 FROM node:20-alpine
 WORKDIR /app
 COPY rating-service/package*.json ./
-RUN npm ci --omit=dev
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY rating-service/swagger/swagger.yaml ./swagger.yaml
+
+COPY wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh
+
 EXPOSE 3000
-CMD ["node", "dist/server.js"]
+
+CMD ["sh", "/wait-for.sh", "node", "dist/server.js"]

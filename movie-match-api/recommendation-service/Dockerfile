@@ -21,13 +21,16 @@ WORKDIR /app
 
 # Solo instalás dependencias de producción
 COPY recommendation-service/package*.json ./
-RUN npm ci --omit=dev
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copiás lo estrictamente necesario
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY recommendation-service/swagger/swagger.yaml ./swagger.yaml
 
+COPY wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh
+
 EXPOSE 3000
 
-CMD ["node", "dist/server.js"]
+CMD ["sh", "/wait-for.sh", "node", "dist/server.js"]
