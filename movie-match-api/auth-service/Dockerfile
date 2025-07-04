@@ -1,24 +1,22 @@
-FROM node:20-alpine
-
+# Etapa 1: Builder
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-ENV PRISMA_CLI_QUERY_ENGINE_TYPE="binary"
-
 COPY auth-service/package*.json ./
-RUN npm install
-
-COPY auth-service/. ./
+RUN npm ci
+COPY auth-service/ ./
 COPY prisma ./prisma
+RUN npm run build && npx prisma generate
+RUN npm prune --production
 
-COPY auth-service/swagger/swagger.yaml /app/swagger.yaml
+# Etapa 2: Imagen final
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY auth-service/swagger/swagger.yaml ./swagger.yaml
 
-RUN npm install -g typescript && \
-    npm install rimraf && \
-    npx rimraf dist && \
-    tsc && \
-    chmod +x ./node_modules/.bin/prisma && \
-    npx prisma generate --schema=./prisma/schema.prisma
+COPY wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh
 
-EXPOSE 3000
-
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node dist/server.js"]
+CMD ["sh", "/wait-for.sh", "node", "dist/server.js"]

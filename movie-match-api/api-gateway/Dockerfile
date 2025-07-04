@@ -1,15 +1,18 @@
-FROM node:20-alpine
-
+# Etapa 1: Builder
+FROM node:20-alpine AS builder
 WORKDIR /app
-
 COPY api-gateway/package*.json ./
-RUN npm install
-
+RUN npm ci
 COPY api-gateway/. ./
-
-RUN chmod +x ./node_modules/.bin/tsc
 RUN npm run build
 
-EXPOSE 3005
+# Etapa 2: Imagen final
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/public ./public
 
+EXPOSE 3005
 CMD ["node", "dist/index.js"]
