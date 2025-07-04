@@ -7,7 +7,7 @@ COPY rating-service/ ./
 COPY prisma ./prisma
 RUN npm run build && npx prisma generate
 
-# Etapa 2: Producción minimalista
+# Etapa 2: Imagen final
 FROM node:20-alpine
 WORKDIR /app
 COPY rating-service/package*.json ./
