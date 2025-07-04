@@ -16,7 +16,11 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY auth-service/swagger/swagger.yaml ./swagger.yaml
 
-COPY wait-for.sh /wait-for.sh
-RUN chmod +x /wait-for.sh
-
-CMD ["sh", "/wait-for.sh", "node", "dist/server.js"]
+# Comentar si se quiere usar la RDS BBDD de produccion
+#COPY wait-for.sh /wait-for.sh
+#RUN chmod +x /wait-for.sh
+#CMD ["sh", "/wait-for.sh", "node", "dist/server.js"]
+# Descomentar si se quiere usar la RDS BBDD de produccion
+COPY wait-for-rds.sh /wait-for-rds.sh
+RUN chmod +x /wait-for-rds.sh
+CMD ["sh", "/wait-for-rds.sh", "node", "dist/server.js"]

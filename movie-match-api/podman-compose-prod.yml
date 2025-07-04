@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2
+    container_name: redis-cache
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    container_name: auth-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: abc123
+    ports:
+      - "3001:3000"
+
+  movie-service:
+    build:
+      context: .
+      dockerfile: movie-service/Dockerfile
+    container_name: movie-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: abc123
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3002:3000"
+
+  rating-service:
+    build:
+      context: .
+      dockerfile: rating-service/Dockerfile
+    container_name: rating-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: abc123
+      REDIS_URL: redis://redis:6379
+      AUTH_SERVICE_URL: http://auth-service:3000
+    ports:
+      - "3003:3000"
+
+  recommendation-service:
+    build:
+      context: .
+      dockerfile: recommendation-service/Dockerfile
+    container_name: recommendation-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: abc123
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3004:3000"
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    environment:
+      JWT_SECRET: abc123
