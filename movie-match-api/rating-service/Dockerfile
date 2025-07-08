@@ -3,9 +3,10 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY rating-service/package*.json ./
 RUN npm ci
-COPY rating-service/ ./
 COPY prisma ./prisma
-RUN npm run build && npx prisma generate
+RUN npx prisma generate
+COPY rating-service/ ./
+RUN npm run build
 
 # Etapa 2: Imagen final
 FROM node:20-alpine
