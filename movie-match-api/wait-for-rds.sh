@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+
 host="database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com"
 port=3306
 
