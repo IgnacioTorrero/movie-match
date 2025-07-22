@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "../auth";
 
 const movieApi = axios.create({
-  baseURL: "http://localhost:3005/api",
+  baseURL: import.meta.env.VITE_API_URL + "/api",
 });
 
 movieApi.interceptors.request.use((config) => {

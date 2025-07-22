@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   redis:
-    image: redis:7.2
-    container_name: redis-cache
+    image: redis:7.2-alpine
+    container_name: redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -15,8 +15,8 @@ services:
     container_name: auth-service
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
-      JWT_SECRET: abc123
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.covqk2uks4dt.us-east-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: a3rU8/*po0--1$
     ports:
       - "3001:3000"
 
@@ -27,8 +27,8 @@ services:
     container_name: movie-service
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
-      JWT_SECRET: abc123
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.covqk2uks4dt.us-east-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: a3rU8/*po0--1$
       REDIS_URL: redis://redis:6379
     ports:
       - "3002:3000"
@@ -40,8 +40,8 @@ services:
     container_name: rating-service
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
-      JWT_SECRET: abc123
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.covqk2uks4dt.us-east-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: a3rU8/*po0--1$
       REDIS_URL: redis://redis:6379
       AUTH_SERVICE_URL: http://auth-service:3000
     ports:
@@ -54,8 +54,8 @@ services:
     container_name: recommendation-service
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.c9w6gi8iyql1.eu-north-1.rds.amazonaws.com:3306/movie_match
-      JWT_SECRET: abc123
+      DATABASE_URL: mysql://admin:RDSAmazon123*@database-1.covqk2uks4dt.us-east-1.rds.amazonaws.com:3306/movie_match
+      JWT_SECRET: a3rU8/*po0--1$
       REDIS_URL: redis://redis:6379
     ports:
       - "3004:3000"
@@ -68,5 +68,7 @@ services:
     restart: unless-stopped
     ports:
       - "3005:3005"
+    volumes:
+      - ./api-gateway/ssl:/app/ssl
     environment:
-      JWT_SECRET: abc123
+      JWT_SECRET: a3rU8/*po0--1$
