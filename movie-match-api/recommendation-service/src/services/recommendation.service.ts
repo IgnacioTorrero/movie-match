@@ -17,21 +17,25 @@ export const getRecommendedMovies = async (userId: number): Promise<any> => {
     return JSON.parse(cached);
   }
 
-  let highRatedMovies: { movie: { id: number; genre: string } }[] = [];
+  let allRated: { score: number; movie: { id: number; genre: string } }[] = [];
 
   try {
-    highRatedMovies = await prisma.rating.findMany({
-      where: { userId, score: { gte: 4 } },
+    allRated = await prisma.rating.findMany({
+      where: { userId },
       include: { movie: true },
     });
-
-    highRatedMovies = highRatedMovies.filter(
-      (r) => r.movie && r.movie.genre
-    );
   } catch (error) {
     console.error("Error al obtener calificaciones:", error);
     throw new Error("Error al acceder a la base de datos.");
   }
+
+  const ratedMovieIds = allRated
+    .filter((r) => r.movie && r.movie.id)
+    .map(({ movie }) => movie.id);
+
+  const highRatedMovies = allRated.filter(
+    (r) => r.score >= 4 && r.movie && r.movie.genre
+  );
 
   if (highRatedMovies.length === 0) {
     return { message: "No hay suficientes datos para recomendar películas." };
@@ -53,9 +57,6 @@ export const getRecommendedMovies = async (userId: number): Promise<any> => {
   const favoriteGenres = Object.entries(genreCount)
     .filter(([_, count]) => count === maxCount)
     .map(([genre]) => genre);
-
-  // 🎯 Obtener IDs de películas ya vistas
-  const ratedMovieIds = highRatedMovies.map(({ movie }) => movie.id);
 
   // 🎥 Buscar nuevas películas del mismo género no vistas
   const recommendedMovies = await prisma.movie.findMany({
