@@ -54,17 +54,17 @@ jest.mock("@prisma/client", () => {
         })),
       },
       userMovies: {
-        findMany: jest.fn(() => [{ userId: 1 }]),
+        findMany: jest.fn(() => [{ userId: 1 }, { userId: 2 }]),
         deleteMany: jest.fn(),
       },
       rating: {
+        findMany: jest.fn(() => [{ userId: 2 }, { userId: 3 }]),
         deleteMany: jest.fn(),
       },
     })),
   };
 });
 
-// Mock de redis
 jest.mock("../../utils/redisClient", () => ({
   del: jest.fn(),
 }));
@@ -126,10 +126,39 @@ describe("Movie Service", () => {
   });
 
   test("Debe eliminar una película correctamente", async () => {
+    const { PrismaClient } = require("@prisma/client");
+    const mockInstance = PrismaClient.mock.results[0].value;
+    const redis = require("../../utils/redisClient");
+
     const deletedMovie = await deleteMovie(1);
 
     expect(deletedMovie).toHaveProperty("id", 1);
     expect(deletedMovie.title).toBe("Deleted Movie");
+
+    expect(mockInstance.rating.findMany).toHaveBeenCalledWith({
+      where: { movieId: 1 },
+      select: { userId: true },
+    });
+    expect(mockInstance.userMovies.findMany).toHaveBeenCalledWith({
+      where: { movieId: 1 },
+      select: { userId: true },
+    });
+
+    expect(mockInstance.rating.deleteMany).toHaveBeenCalledWith({
+      where: { movieId: 1 },
+    });
+    expect(mockInstance.userMovies.deleteMany).toHaveBeenCalledWith({
+      where: { movieId: 1 },
+    });
+
+    expect(mockInstance.movie.delete).toHaveBeenCalledWith({
+      where: { id: 1 },
+    });
+
+    expect(redis.del).toHaveBeenCalledTimes(3);
+    expect(redis.del).toHaveBeenCalledWith("recommendations:1");
+    expect(redis.del).toHaveBeenCalledWith("recommendations:2");
+    expect(redis.del).toHaveBeenCalledWith("recommendations:3");
   });
 
   test("Debe lanzar error si la película no existe", async () => {

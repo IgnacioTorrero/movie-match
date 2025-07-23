@@ -195,18 +195,30 @@ const updateMovie = async (
  */
 const deleteMovie = async (id: number): Promise<Movie> => {
   try {
-    const userRelations = await prisma.userMovies.findMany({
-      where: { movieId: id },
-      select: { userId: true },
-    });
+    // Obtener todos los userId que tienen relación con la película (por rating o por userMovies)
+    const [ratingUsers, movieUsers] = await Promise.all([
+      prisma.rating.findMany({
+        where: { movieId: id },
+        select: { userId: true },
+      }),
+      prisma.userMovies.findMany({
+        where: { movieId: id },
+        select: { userId: true },
+      }),
+    ]);
 
+    const allUserIds = Array.from(
+      new Set([...ratingUsers, ...movieUsers].map((u) => u.userId))
+    );
+
+    // Eliminar relaciones antes de borrar la película
     await prisma.rating.deleteMany({ where: { movieId: id } });
     await prisma.userMovies.deleteMany({ where: { movieId: id } });
 
     const deleted = await prisma.movie.delete({ where: { id } });
 
-    // Limpiar caché de recomendaciones de todos los usuarios asociados
-    for (const { userId } of userRelations) {
+    // Limpiar caché de recomendaciones de todos los usuarios involucrados
+    for (const userId of allUserIds) {
       await redis.del(`recommendations:${userId}`);
     }
 

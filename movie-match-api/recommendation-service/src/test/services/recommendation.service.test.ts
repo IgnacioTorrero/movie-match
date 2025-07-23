@@ -102,7 +102,9 @@ describe("Recommendation Service", () => {
   });
 
   test("Devuelve mensaje si no se encuentran recomendaciones nuevas", async () => {
-    ratingFindManyMock.mockResolvedValue([{ movie: { id: 104, genre: "Drama" } }]);
+    ratingFindManyMock.mockResolvedValue([
+      { score: 4, movie: { id: 104, genre: "Drama" } },
+    ]);
     movieFindManyMock.mockResolvedValue([]);
 
     const result = await getRecommendedMovies(3);
