@@ -28,5 +28,6 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "vite": "^6.3.1"
-  }
+  },
+  "comment": "Para probar en el local, quitar el --mode production del build"
 }
