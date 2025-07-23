@@ -33,6 +33,7 @@ services:
       - "3001:3000"
     depends_on:
       - mysql
+      - redis
 
   movie-service:
     build:

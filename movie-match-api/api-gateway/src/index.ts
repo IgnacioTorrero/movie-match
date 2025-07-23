@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
 import https from 'https';
+import http from 'http';
 import fs from 'fs';
 import { verifyJWT } from './middlewares/auth.middleware';
 
@@ -76,6 +77,14 @@ const sslOptions = {
   cert: fs.readFileSync(path.join(__dirname, '../ssl/cert.pem')),
 };
 
+// Producción
+/*
 https.createServer(sslOptions, app).listen(PORT, () => {
   console.log(`✅ API Gateway HTTPS en https://localhost:${PORT}`);
+});
+*/
+
+//Desarrollo
+http.createServer(app).listen(PORT, () => {
+  console.log(`✅ API Gateway HTTP en https://localhost:${PORT}`);
 });
