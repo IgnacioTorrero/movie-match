@@ -6,7 +6,7 @@ RUN npm ci
 COPY movie-service/ ./
 COPY prisma ./prisma
 
-# 👇 Esta línea es clave para evitar el error 126
+# Clave para evitar error 126
 RUN chmod +x node_modules/.bin/*
 
 RUN npm run build && npx prisma generate

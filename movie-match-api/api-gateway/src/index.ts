@@ -13,10 +13,10 @@ dotenv.config();
 const app = express();
 const PORT = 3005;
 
-// ✅ Middleware base - ORDEN IMPORTANTE
+// ✅ Middleware base
 app.use(express.json());
 
-// ✅ CORS abierto (temporal o restringido según prefieras)
+// ✅ CORS abierto
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -55,7 +55,7 @@ app.use('/api/recommendations', verifyJWT, proxy('http://recommendation-service:
   proxyReqPathResolver: req => req.originalUrl
 }));
 
-// 🖼️ Servir los frontends compilados
+// 🖼️ Frontends compilados
 app.use('/auth', express.static(path.join(__dirname, '../public/auth')));
 app.use('/movies', express.static(path.join(__dirname, '../public/movies')));
 
