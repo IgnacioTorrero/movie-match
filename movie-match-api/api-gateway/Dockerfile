@@ -14,5 +14,8 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
 
+# Copiar el certificado al contenedor
+COPY api-gateway/ssl ./ssl
+
 EXPOSE 3005
 CMD ["node", "dist/index.js"]

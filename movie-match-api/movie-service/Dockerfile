@@ -5,6 +5,10 @@ COPY movie-service/package*.json ./
 RUN npm ci
 COPY movie-service/ ./
 COPY prisma ./prisma
+
+# Clave para evitar error 126
+RUN chmod +x node_modules/.bin/*
+
 RUN npm run build && npx prisma generate
 
 # Etapa 2: Imagen final

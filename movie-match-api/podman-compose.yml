@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
-      JWT_SECRET: abc123
+      JWT_SECRET: a3rU8/*po0--1$
     ports:
       - "3001:3000"
     depends_on:
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
-      JWT_SECRET: abc123
+      JWT_SECRET: a3rU8/*po0--1$
       REDIS_URL: redis://redis:6379
     ports:
       - "3002:3000"
@@ -58,7 +58,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
-      JWT_SECRET: abc123
+      JWT_SECRET: a3rU8/*po0--1$
       REDIS_URL: redis://redis:6379
       AUTH_SERVICE_URL: http://auth-service:3000
     ports:
@@ -75,7 +75,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql://root:root@mysql:3306/proyecto_node
-      JWT_SECRET: abc123
+      JWT_SECRET: a3rU8/*po0--1$
       REDIS_URL: redis://redis:6379
     ports:
       - "3004:3000"
@@ -97,7 +97,7 @@ services:
       - rating-service
       - recommendation-service
     environment:
-      JWT_SECRET: abc123
+      JWT_SECRET: a3rU8/*po0--1$
 
 volumes:
   db_data:
