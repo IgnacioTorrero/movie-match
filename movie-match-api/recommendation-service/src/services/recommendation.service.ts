@@ -2,11 +2,11 @@ import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
 
 /**
- * Genera recomendaciones de películas para un usuario basado en sus calificaciones previas.
+ * Generates movie recommendations for a user based on their previous ratings.
  *
- * @param userId - ID del usuario autenticado
- * @returns Lista de películas recomendadas o un mensaje informativo
- * @throws Error si falla la conexión a la base de datos
+ * @param userId - Authenticated user's ID
+ * @returns List of recommended movies or an informative message
+ * @throws Error if database access fails
  */
 export const getRecommendedMovies = async (userId: number): Promise<any> => {
   const cacheKey = `recommendations:${userId}`;

@@ -42,7 +42,7 @@ describe("Recommendation Service", () => {
     redis.get.mockResolvedValue(null);
   });
 
-  test("Devuelve recomendaciones desde caché si están disponibles", async () => {
+  test("Returns cached recommendations if available", async () => {
     const userId = 4;
     const cachedMovies = [{ id: 401, title: "Película en caché", genre: "Action" }];
     redis.get.mockResolvedValueOnce(JSON.stringify(cachedMovies));
@@ -53,7 +53,7 @@ describe("Recommendation Service", () => {
     expect(result).toEqual(cachedMovies);
   });
 
-  test("Recomienda películas basadas en género favorito", async () => {
+  test("Recommends movies based on favorite genre", async () => {
     const userId = 1;
 
     ratingFindManyMock.mockResolvedValue([
@@ -85,7 +85,7 @@ describe("Recommendation Service", () => {
     expect(redis.set).toHaveBeenCalled();
   });
 
-  test("Devuelve mensaje si el usuario no tiene suficientes calificaciones", async () => {
+  test("Returns message if user has insufficient ratings", async () => {
     ratingFindManyMock.mockResolvedValue([]);
 
     const result = await getRecommendedMovies(2);
@@ -93,7 +93,7 @@ describe("Recommendation Service", () => {
     expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
   });
 
-  test("Devuelve mensaje si ninguna película tiene género válido", async () => {
+  test("Returns message if no rated movie has a valid genre", async () => {
     ratingFindManyMock.mockResolvedValue([{ movie: { id: 999, genre: "" } }]);
 
     const result = await getRecommendedMovies(5);
@@ -101,7 +101,7 @@ describe("Recommendation Service", () => {
     expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
   });
 
-  test("Devuelve mensaje si no se encuentran recomendaciones nuevas", async () => {
+  test("Returns message if no new recommendations are found", async () => {
     ratingFindManyMock.mockResolvedValue([
       { score: 4, movie: { id: 104, genre: "Drama" } },
     ]);
@@ -112,7 +112,7 @@ describe("Recommendation Service", () => {
     expect(result).toEqual({ message: "No se encontraron recomendaciones nuevas." });
   });
 
-  test("Devuelve mensaje si no se encuentran géneros para recomendar", async () => {
+  test("Returns message if no genres are found to recommend", async () => {
     ratingFindManyMock.mockResolvedValue([{ movie: { id: 888, genre: "" } }]);
 
     const result = await getRecommendedMovies(6);
@@ -120,7 +120,7 @@ describe("Recommendation Service", () => {
     expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
   });
 
-  test("Maneja error de Prisma y lanza error genérico", async () => {
+  test("Handles Prisma error and throws generic error", async () => {
     ratingFindManyMock.mockRejectedValue(new Error("Fallo Prisma"));
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 

@@ -39,7 +39,7 @@ describe("Recommendation Routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Simular autenticación
+    // Simulate authentication
     (authMiddleware.authenticateToken as jest.Mock).mockImplementation(
       (req, _res, next) => {
         req.user = mockUser;
@@ -48,7 +48,7 @@ describe("Recommendation Routes", () => {
     );
   });
 
-  test("GET /recommendations debería devolver recomendaciones exitosamente", async () => {
+  test("GET /recommendations should return recommendations successfully", async () => {
     const mockRecs = [{ id: 1, title: "Pelicula recomendada" }];
     (recommendationService.getRecommendedMovies as jest.Mock).mockResolvedValue(mockRecs);
 
@@ -59,7 +59,7 @@ describe("Recommendation Routes", () => {
     expect(recommendationService.getRecommendedMovies).toHaveBeenCalledWith(mockUser.id);
   });
 
-  test("GET /recommendations debería manejar errores del servicio", async () => {
+  test("GET /recommendations should handle service errors", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     (recommendationService.getRecommendedMovies as jest.Mock).mockRejectedValue(new Error("Fallo en recomendación"));
 
@@ -70,7 +70,7 @@ describe("Recommendation Routes", () => {
     consoleSpy.mockRestore();
   });
 
-  test("DELETE /recommendations/cache debería borrar la caché del usuario", async () => {
+  test("DELETE /recommendations/cache should delete the user's cache", async () => {
     (redisClient.del as jest.Mock).mockResolvedValue(1);
 
     const res = await request(app).delete("/recommendations/cache");
@@ -80,7 +80,7 @@ describe("Recommendation Routes", () => {
     expect(redisClient.del).toHaveBeenCalledWith(`recommendations:${mockUser.id}`);
   });
 
-  test("DELETE /recommendations/cache debería manejar errores", async () => {
+  test("DELETE /recommendations/cache should handle errors", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     (redisClient.del as jest.Mock).mockRejectedValue(new Error("Fallo en redis"));
 
@@ -91,7 +91,7 @@ describe("Recommendation Routes", () => {
     consoleSpy.mockRestore();
   });
 
-  test("GET /recommendations debería devolver 400 si no hay userId", async () => {
+  test("GET /recommendations should return 400 if userId is missing", async () => {
     (authMiddleware.authenticateToken as jest.Mock).mockImplementation((req, _res, next) => {
       req.user = undefined;
       next();
@@ -103,7 +103,7 @@ describe("Recommendation Routes", () => {
     expect(res.body).toEqual({ error: "User ID no proporcionado." });
   });
 
-  test("DELETE /recommendations/cache debería devolver 400 si no hay userId", async () => {
+  test("DELETE /recommendations/cache should return 400 if userId is missing", async () => {
     (authMiddleware.authenticateToken as jest.Mock).mockImplementation((req, _res, next) => {
       req.user = undefined;
       next();

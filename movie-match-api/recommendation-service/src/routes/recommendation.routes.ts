@@ -7,8 +7,8 @@ const router = Router();
 
 /**
  * @route   GET /recommendations
- * @desc    Obtiene recomendaciones personalizadas para el usuario autenticado
- * @access  Privado (requiere JWT)
+ * @desc    Retrieves personalized recommendations for the authenticated user
+ * @access  Private (requires JWT)
  */
 router.get(
   "/",
@@ -33,8 +33,8 @@ router.get(
 
 /**
  * @route   DELETE /recommendations/cache
- * @desc    Elimina la caché de recomendaciones del usuario autenticado
- * @access  Privado (requiere JWT)
+ * @desc    Deletes the recommendation cache for the authenticated user
+ * @access  Private (requires JWT)
  */
 router.delete(
   "/cache",
