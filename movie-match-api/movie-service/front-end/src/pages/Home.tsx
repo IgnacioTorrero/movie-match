@@ -70,7 +70,7 @@ const Home = () => {
           🎬 Películas
         </h1>
 
-        {/* Filtros */}
+        {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <input
             type="text"
@@ -98,7 +98,7 @@ const Home = () => {
         {/* Error */}
         {error && <p className="text-red-600 mb-4">{error}</p>}
 
-        {/* Lista de películas o mensaje vacío */}
+        {/* Movie list or empty message */}
         <div className="grid gap-4 mb-6">
           {movies.length > 0 ? (
             movies.map((movie: any) => (
@@ -112,7 +112,7 @@ const Home = () => {
           )}
         </div>
 
-        {/* Paginación */}
+        {/* Pagination */}
         <div className="flex justify-center items-center space-x-4">
           <button
             className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
@@ -133,7 +133,7 @@ const Home = () => {
           </button>
         </div>
 
-        {/* 🔽 Recomendaciones */}
+        {/* 🔽 Recommendations */}
         {!genre && !director && !year && <RecommendedMovies />}
       </div>
     </div>

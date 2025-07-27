@@ -32,7 +32,7 @@ const EditMovie = () => {
   };
 
   const handleSubmit = async () => {
-    // Validaciones básicas
+    // Basic validations
     if (!form.title || !form.director || !form.year || !form.genre) {
       setError("Todos los campos excepto sinopsis son obligatorios.");
       return;
@@ -70,7 +70,7 @@ const EditMovie = () => {
           <span className="block sm:inline ml-1">{error}</span>
         </div>
       )}
-      {/* ⭐ Calificación separada */}
+      {/* ⭐ Separate rating */}
       <div className="mt-6 border-t pt-4">
         <h2 className="text-lg font-semibold mb-2">Actualizar mi calificación</h2>
         <RatingStars movieId={parseInt(id!)} />

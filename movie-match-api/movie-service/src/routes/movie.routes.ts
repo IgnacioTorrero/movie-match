@@ -16,8 +16,8 @@ const router = Router();
 
 /**
  * @route   POST /movies
- * @desc    Crea una nueva película asociada al usuario autenticado
- * @access  Privado (requiere JWT)
+ * @desc    Creates a new movie associated with the authenticated user
+ * @access  Private (requires JWT)
  */
 router.post(
   "/movies",
@@ -38,8 +38,8 @@ router.post(
 
 /**
  * @route   GET /movies
- * @desc    Lista películas del usuario autenticado con filtros y paginación
- * @access  Privado (requiere JWT)
+ * @desc    Lists movies of the authenticated user with filters and pagination
+ * @access  Private (requires JWT)
  */
 router.get(
   "/movies",
@@ -83,8 +83,8 @@ router.get(
 
 /**
  * @route   GET /movies/:id
- * @desc    Obtiene los datos de una película específica del usuario
- * @access  Privado (requiere JWT)
+ * @desc    Retrieves details of a specific movie belonging to the user
+ * @access  Private (requires JWT)
  */
 router.get(
   "/movies/:id",
@@ -108,8 +108,8 @@ router.get(
 
 /**
  * @route   PUT /movies/:id
- * @desc    Actualiza una película si pertenece al usuario autenticado
- * @access  Privado (requiere JWT)
+ * @desc    Updates a movie if it belongs to the authenticated user
+ * @access  Private (requires JWT)
  */
 router.put(
   "/movies/:id",
@@ -152,8 +152,8 @@ router.put(
 
 /**
  * @route   DELETE /movies/:id
- * @desc    Elimina una película si pertenece al usuario autenticado
- * @access  Privado (requiere JWT)
+ * @desc    Deletes a movie if it belongs to the authenticated user
+ * @access  Private (requires JWT)
  */
 router.delete(
   "/movies/:id",
