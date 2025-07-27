@@ -3,13 +3,13 @@ import express, { Express } from "express";
 import authRoutes from "../../routes/auth.routes";
 import { registerUser, loginUser } from "../../services/auth.service";
 
-// Mock de servicios
+// Mock services
 jest.mock("../../services/auth.service", () => ({
   registerUser: jest.fn(),
   loginUser: jest.fn()
 }));
 
-// Mock de validación para no bloquear por esquema
+// Mock validation to bypass schema enforcement
 jest.mock("../../middlewares/validate.middleware", () => ({
   validate: () => (req: any, res: any, next: any) => next()
 }));
@@ -28,7 +28,7 @@ beforeEach(() => {
 
 describe("Auth Routes", () => {
   describe("POST /api/auth/register", () => {
-    it("debe registrar un usuario y devolver 201", async () => {
+    it("should register a user and return 201", async () => {
       const mockUser = {
         id: 1,
         name: "Juan",
@@ -54,7 +54,7 @@ describe("Auth Routes", () => {
       });
     });
 
-    it("debe devolver 400 si el registro falla", async () => {
+    it("should return 400 if registration fails", async () => {
       (registerUser as jest.Mock).mockRejectedValue(new Error("Registro fallido"));
 
       const res = await request(app)
@@ -71,7 +71,7 @@ describe("Auth Routes", () => {
   });
 
   describe("POST /api/auth/login", () => {
-    it("debe loguear correctamente y devolver token", async () => {
+    it("should log in successfully and return a token", async () => {
       const mockData = {
         token: "token123",
         user: {
@@ -95,7 +95,7 @@ describe("Auth Routes", () => {
       expect(res.body.user).toHaveProperty("email", "juan@example.com");
     });
 
-    it("debe fallar con credenciales inválidas", async () => {
+    it("should fail with invalid credentials", async () => {
       (loginUser as jest.Mock).mockRejectedValue(new Error("Invalid credentials"));
 
       const res = await request(app)

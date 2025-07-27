@@ -7,7 +7,7 @@ const router = Router();
 
 /**
  * @route   POST /api/auth/register
- * @desc    Registra un nuevo usuario
+ * @desc    Registers a new user
  * @access  Public
  */
 router.post(
@@ -27,7 +27,7 @@ router.post(
 
 /**
  * @route   POST /api/auth/login
- * @desc    Inicia sesión y retorna token
+ * @desc    Logs in and returns a token
  * @access  Public
  */
 router.post("/login", async (req, res) => {

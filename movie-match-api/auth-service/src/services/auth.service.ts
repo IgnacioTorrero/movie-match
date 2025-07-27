@@ -2,22 +2,22 @@ import { prisma } from "../prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Clave secreta utilizada para firmar los tokens JWT
+// Secret key used to sign JWT tokens
 const SECRET_KEY = process.env.JWT_SECRET!;
 if (!SECRET_KEY) throw new Error("JWT_SECRET is required");
 
 const SALT_ROUNDS = 12;
 
 /**
- * Registra un nuevo usuario en la base de datos.
+ * Registers a new user in the database.
  * 
- * Hashea la contraseña utilizando bcrypt antes de guardar el registro.
- * Normaliza el email a minúsculas y limpia espacios en blanco del nombre y email.
+ * Hashes the password using bcrypt before saving the record.
+ * Normalizes the email to lowercase and trims whitespace from name and email.
  * 
- * @param name - Nombre del usuario
- * @param email - Email del usuario
- * @param password - Contraseña en texto plano
- * @returns Objeto del usuario creado
+ * @param name - User's name
+ * @param email - User's email
+ * @param password - Plain text password
+ * @returns Created user object
  */
 export const registerUser = async (
   name: string,
@@ -39,15 +39,15 @@ export const registerUser = async (
 };
 
 /**
- * Autentica a un usuario existente con email y contraseña.
+ * Authenticates an existing user using email and password.
  * 
- * Compara la contraseña proporcionada con la contraseña hasheada almacenada.
- * Si la autenticación es exitosa, genera y retorna un token JWT firmado.
+ * Compares the provided password with the stored hashed password.
+ * If authentication is successful, generates and returns a signed JWT token.
  * 
- * @param email - Email del usuario
- * @param password - Contraseña en texto plano
- * @returns Objeto que contiene el token JWT y los datos básicos del usuario
- * @throws Error si las credenciales son inválidas
+ * @param email - User's email
+ * @param password - Plain text password
+ * @returns Object containing the JWT token and basic user data
+ * @throws Error if credentials are invalid
  */
 export const loginUser = async (
   email: string,

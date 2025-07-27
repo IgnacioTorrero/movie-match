@@ -3,7 +3,7 @@ import express, { Express } from "express";
 import userRoutes from "../../routes/user.route";
 import { prisma } from "../../prisma";
 
-// Mock de Prisma
+// Prisma mock
 jest.mock("../../prisma", () => ({
   prisma: {
     user: {
@@ -26,7 +26,7 @@ beforeEach(() => {
 
 describe("User Routes", () => {
   describe("GET /api/users/:id", () => {
-    it("debe devolver el usuario si existe", async () => {
+    it("should return the user if it exists", async () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue({
         id: 1,
         email: "test@example.com"
@@ -41,14 +41,14 @@ describe("User Routes", () => {
       });
     });
 
-    it("debe devolver 400 si el ID no es un número válido", async () => {
+    it("should return 400 if the ID is not a valid number", async () => {
       const res = await request(app).get("/api/users/abc");
 
       expect(res.status).toBe(400);
       expect(res.body).toEqual({ message: "ID inválido" });
     });
 
-    it("debe devolver 404 si el usuario no existe", async () => {
+    it("should return 404 if the user does not exist", async () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
 
       const res = await request(app).get("/api/users/99");
@@ -57,7 +57,7 @@ describe("User Routes", () => {
       expect(res.body).toEqual({ message: "Usuario no encontrado" });
     });
 
-    it("debe devolver 500 si ocurre un error interno", async () => {
+    it("should return 500 if an internal error occurs", async () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       (prisma.user.findUnique as jest.Mock).mockRejectedValue(new Error("DB error"));
