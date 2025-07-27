@@ -3,7 +3,7 @@ node_modules/
 dist/
 coverage/
 
-# ⚙️ Configuración y logs
+# ⚙️ Configuration and logs
 .env
 .env.local
 .env.development
@@ -14,7 +14,7 @@ coverage/
 .idea/
 .DS_Store
 
-# 🔄 Dependencias y caché
+# 🔄 Dependencies and cache
 yarn.lock
 pnpm-lock.yaml
 npm-debug.log*
@@ -23,10 +23,10 @@ yarn-error.log*
 logs/
 *.log
 
-# 🔄 Prisma (evita subir migraciones y caché)
+# 🔄 Prisma (avoid uploading migrations and cache)
 prisma/dev.db
 prisma/dev.db-journal
 prisma/migrations/
 
-# 🔄 Docker (si lo usas en el futuro)
+# 🔄 Docker (if used in the future)
 docker-compose.override.yml
