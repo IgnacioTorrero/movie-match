@@ -1,26 +1,26 @@
 #!/bin/sh
 
-echo "⏳ Esperando a MySQL en mysql:3306..."
+echo "⏳ Waiting for MySQL in mysql:3306..."
 i=0
 while ! nc -z -v -w30 mysql 3306 2>/dev/null
 do
   i=$((i+3))
-  printf "\r⏳ %ds esperando a MySQL..." "$i"
+  printf "\r⏳ %ds waiting for MySQL..." "$i"
   sleep 3
 done
 echo ""
-echo "✅ MySQL está listo."
+echo "✅ MySQL is ready."
 
-echo "⏳ Esperando a Redis en redis:6379..."
+echo "⏳ Waiting for Redis in redis:6379..."
 i=0
 while ! nc -z -v -w30 redis 6379 2>/dev/null
 do
   i=$((i+3))
-  printf "\r⏳ %ds esperando a Redis..." "$i"
+  printf "\r⏳ %ds waiting for Redis..." "$i"
   sleep 3
 done
 echo ""
-echo "✅ Redis está listo."
+echo "✅ Redis is ready."
 
-echo "🚀 Arrancando app: $@"
+echo "🚀 Starting app: $@"
 exec "$@"

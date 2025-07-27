@@ -32,14 +32,14 @@ export default function Login() {
       setError('');
       window.location.href = `/movies/?token=${data.token}`;
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : 'Unknown error');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
       <div className="bg-white p-10 rounded-2xl shadow-lg w-full max-w-2xl">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Iniciar Sesión</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Login</h1>
 
         <input
           className="w-full p-3 mb-3 border rounded-lg text-sm"
@@ -62,7 +62,7 @@ export default function Login() {
             onClick={() => setShowPassword(!showPassword)}
             role="button"
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
-            title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            title={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none"
@@ -84,7 +84,7 @@ export default function Login() {
 
         <div className="flex justify-between gap-4">
           <button className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg text-sm" onClick={() => navigate('/')}>
-            Volver
+            Back
           </button>
           <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-sm" onClick={login}>
             Login
@@ -92,7 +92,7 @@ export default function Login() {
         </div>
 
         {error && <p className="text-red-600 mt-4 text-center text-sm">{error}</p>}
-        {user && <p className="text-gray-600 mt-2 text-sm text-center">Logueado como: {user.email}</p>}
+        {user && <p className="text-gray-600 mt-2 text-sm text-center">Logged in as: {user.email}</p>}
       </div>
     </div>
   );

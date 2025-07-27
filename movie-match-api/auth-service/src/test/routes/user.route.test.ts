@@ -45,7 +45,7 @@ describe("User Routes", () => {
       const res = await request(app).get("/api/users/abc");
 
       expect(res.status).toBe(400);
-      expect(res.body).toEqual({ message: "ID inválido" });
+      expect(res.body).toEqual({ message: "Invalid ID" });
     });
 
     it("should return 404 if the user does not exist", async () => {
@@ -54,7 +54,7 @@ describe("User Routes", () => {
       const res = await request(app).get("/api/users/99");
 
       expect(res.status).toBe(404);
-      expect(res.body).toEqual({ message: "Usuario no encontrado" });
+      expect(res.body).toEqual({ message: "User not found" });
     });
 
     it("should return 500 if an internal error occurs", async () => {
@@ -65,7 +65,7 @@ describe("User Routes", () => {
       const res = await request(app).get("/api/users/1");
 
       expect(res.status).toBe(500);
-      expect(res.body).toEqual({ message: "Error interno del servidor" });
+      expect(res.body).toEqual({ message: "Internal Server Error" });
 
       consoleSpy.mockRestore();
     });

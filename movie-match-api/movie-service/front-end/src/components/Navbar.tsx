@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import { Link } from "react-router-dom";
 import { removeToken } from "../auth";
 
@@ -22,14 +21,14 @@ const Navbar = () => {
           to="/create"
           className="text-white hover:text-purple-400 transition-colors"
         >
-          Agregar película
+          Add Movie
         </Link>
       </div>
       <button
         onClick={handleLogout}
         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-4"
       >
-        Cerrar sesión
+        Sign out
       </button>
     </nav>
   );

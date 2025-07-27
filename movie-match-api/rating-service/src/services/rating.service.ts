@@ -16,16 +16,16 @@ export const rateMovie = async (
   score: number
 ): Promise<{ id: number; userId: number; movieId: number; score: number }> => {
   if (score < 1 || score > 5) {
-    throw new Error("La calificación debe estar entre 1 y 5 estrellas.");
+    throw new Error("The rating must be between 1 and 5 stars.");
   }
 
   if (!userId || !movieId) {
-    throw new Error("El ID de usuario y el ID de película son requeridos.");
+    throw new Error("User ID and Movie ID are required.");
   }
 
   const movie = await prisma.movie.findUnique({ where: { id: movieId } });
   if (!movie) {
-    throw new Error("La película no existe.");
+    throw new Error("The film does not exist.");
   }
 
   const existingRating = await prisma.rating.findFirst({
@@ -40,11 +40,11 @@ export const rateMovie = async (
       });
 
       await redis.del(`recommendations:${userId}`);
-      console.log("🧹 Caché de recomendaciones invalidado (update)");
+      console.log("🧹 Recommendation cache invalidated (update)");
 
       return updated;
     } catch (error) {
-      throw new Error("Error al actualizar la calificación.");
+      throw new Error("Error updating rating.");
     }
   }
 
@@ -54,10 +54,10 @@ export const rateMovie = async (
     });
 
     await redis.del(`recommendations:${userId}`);
-    console.log("🧹 Caché de recomendaciones invalidado (create)");
+    console.log("🧹 Recommendation cache invalidated (create)");
 
     return created;
   } catch (error) {
-    throw new Error("Error al crear la calificación.");
+    throw new Error("Error creating rating.");
   }
 };

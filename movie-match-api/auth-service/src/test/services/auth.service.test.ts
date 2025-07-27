@@ -60,7 +60,7 @@ describe("Auth Service", () => {
 
   test("Should fail login if password is incorrect", async () => {
     const email = "john@example.com";
-    const passwordIncorrecto = "claveEquivocada";
+    const passwordIncorrecto = "wrongKey";
 
     await expect(loginUser(email, passwordIncorrecto)).rejects.toThrow("Invalid credentials");
   });

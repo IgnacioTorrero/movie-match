@@ -49,7 +49,7 @@ describe("Recommendation Routes", () => {
   });
 
   test("GET /recommendations should return recommendations successfully", async () => {
-    const mockRecs = [{ id: 1, title: "Pelicula recomendada" }];
+    const mockRecs = [{ id: 1, title: "Recommended movie" }];
     (recommendationService.getRecommendedMovies as jest.Mock).mockResolvedValue(mockRecs);
 
     const res = await request(app).get("/recommendations");
@@ -61,12 +61,12 @@ describe("Recommendation Routes", () => {
 
   test("GET /recommendations should handle service errors", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-    (recommendationService.getRecommendedMovies as jest.Mock).mockRejectedValue(new Error("Fallo en recomendación"));
+    (recommendationService.getRecommendedMovies as jest.Mock).mockRejectedValue(new Error("Failure in recommendation"));
 
     const res = await request(app).get("/recommendations");
 
     expect(res.status).toBe(500);
-    expect(res.body.error).toBe("Fallo en recomendación");
+    expect(res.body.error).toBe("Failure in recommendation");
     consoleSpy.mockRestore();
   });
 
@@ -76,18 +76,18 @@ describe("Recommendation Routes", () => {
     const res = await request(app).delete("/recommendations/cache");
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ message: "Caché de recomendaciones borrada correctamente." });
+    expect(res.body).toEqual({ message: "Recommendation cache successfully cleared." });
     expect(redisClient.del).toHaveBeenCalledWith(`recommendations:${mockUser.id}`);
   });
 
   test("DELETE /recommendations/cache should handle errors", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-    (redisClient.del as jest.Mock).mockRejectedValue(new Error("Fallo en redis"));
+    (redisClient.del as jest.Mock).mockRejectedValue(new Error("Redis failure"));
 
     const res = await request(app).delete("/recommendations/cache");
 
     expect(res.status).toBe(500);
-    expect(res.body.error).toBe("Fallo en redis");
+    expect(res.body.error).toBe("Redis failure");
     consoleSpy.mockRestore();
   });
 
@@ -100,7 +100,7 @@ describe("Recommendation Routes", () => {
     const res = await request(app).get("/recommendations");
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: "User ID no proporcionado." });
+    expect(res.body).toEqual({ error: "User ID not provided." });
   });
 
   test("DELETE /recommendations/cache should return 400 if userId is missing", async () => {
@@ -112,6 +112,6 @@ describe("Recommendation Routes", () => {
     const res = await request(app).delete("/recommendations/cache");
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: "User ID no proporcionado." });
+    expect(res.body).toEqual({ error: "User ID not provided." });
   });
 });

@@ -14,7 +14,7 @@ class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error atrapado por ErrorBoundary:", error, errorInfo);
+    console.error("Error caught by ErrorBoundary:", error, errorInfo);
   }
 
   render() {
@@ -22,13 +22,13 @@ class ErrorBoundary extends React.Component<Props, State> {
         return (
         <div className="h-screen flex items-center justify-center text-center bg-gray-100">
             <div>
-            <h1 className="text-2xl font-bold text-red-600 mb-2">⚠️ Error inesperado</h1>
-            <p className="text-gray-700 mb-4">Algo salió mal. Podés intentar recargar la página.</p>
+            <h1 className="text-2xl font-bold text-red-600 mb-2">⚠️ Unexpected error</h1>
+            <p className="text-gray-700 mb-4">Something went wrong. You can try reloading the page.</p>
             <button
                 onClick={() => window.location.reload()}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
             >
-                Recargar
+                Reload
             </button>
             </div>
         </div>

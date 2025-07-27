@@ -13,7 +13,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
     const userId = Number(req.params.id);
 
     if (!Number.isInteger(userId) || userId <= 0) {
-      res.status(400).json({ message: "ID inválido" });
+      res.status(400).json({ message: "Invalid ID" });
       return;
     }
 
@@ -23,14 +23,14 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
     });
 
     if (!user) {
-      res.status(404).json({ message: "Usuario no encontrado" });
+      res.status(404).json({ message: "User not found" });
       return;
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Error al buscar usuario:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
+    console.error("Error searching for user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

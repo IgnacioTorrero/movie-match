@@ -29,5 +29,5 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.1"
   },
-  "comment": "Para probar en el local, quitar el --mode production del build"
+  "comment": "To test locally, remove the --mode production from the build"
 }

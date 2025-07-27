@@ -53,17 +53,17 @@ describe("Rating Service", () => {
   });
 
   test("Should throw an error if the movie does not exist", async () => {
-    await expect(rateMovie(1, 99, 3)).rejects.toThrow("La película no existe.");
+    await expect(rateMovie(1, 99, 3)).rejects.toThrow("The film does not exist.");
   });
 
   test("Should throw an error if the score is invalid", async () => {
-    await expect(rateMovie(1, 1, 0)).rejects.toThrow("La calificación debe estar entre 1 y 5 estrellas.");
-    await expect(rateMovie(1, 1, 6)).rejects.toThrow("La calificación debe estar entre 1 y 5 estrellas.");
+    await expect(rateMovie(1, 1, 0)).rejects.toThrow("The rating must be between 1 and 5 stars.");
+    await expect(rateMovie(1, 1, 6)).rejects.toThrow("The rating must be between 1 and 5 stars.");
   });
 
   test("Should throw an error if userId or movieId is missing", async () => {
-    await expect(rateMovie(0, 1, 3)).rejects.toThrow("El ID de usuario y el ID de película son requeridos.");
-    await expect(rateMovie(1, 0, 3)).rejects.toThrow("El ID de usuario y el ID de película son requeridos.");
+    await expect(rateMovie(0, 1, 3)).rejects.toThrow("User ID and Movie ID are required.");
+    await expect(rateMovie(1, 0, 3)).rejects.toThrow("User ID and Movie ID are required.");
   });
 
   test("Should throw an error when rating update fails", async () => {
@@ -73,7 +73,7 @@ describe("Rating Service", () => {
     mockInstance.rating.findFirst.mockResolvedValueOnce({ id: 99 });
     mockInstance.rating.update.mockRejectedValueOnce(new Error("DB error"));
 
-    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error al actualizar la calificación.");
+    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error updating rating.");
   });
 
   test("Should throw an error when rating creation fails", async () => {
@@ -83,6 +83,6 @@ describe("Rating Service", () => {
     mockInstance.rating.findFirst.mockResolvedValueOnce(null);
     mockInstance.rating.create.mockRejectedValueOnce(new Error("DB error"));
 
-    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error al crear la calificación.");
+    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error creating rating.");
   });
 });

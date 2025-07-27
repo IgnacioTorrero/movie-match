@@ -44,7 +44,7 @@ describe("Recommendation Service", () => {
 
   test("Returns cached recommendations if available", async () => {
     const userId = 4;
-    const cachedMovies = [{ id: 401, title: "Película en caché", genre: "Action" }];
+    const cachedMovies = [{ id: 401, title: "Cached movie", genre: "Action" }];
     redis.get.mockResolvedValueOnce(JSON.stringify(cachedMovies));
 
     const result = await getRecommendedMovies(userId);
@@ -90,7 +90,7 @@ describe("Recommendation Service", () => {
 
     const result = await getRecommendedMovies(2);
 
-    expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+    expect(result).toEqual({ message: "There is not enough data to recommend movies." });
   });
 
   test("Returns message if no rated movie has a valid genre", async () => {
@@ -98,7 +98,7 @@ describe("Recommendation Service", () => {
 
     const result = await getRecommendedMovies(5);
 
-    expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+    expect(result).toEqual({ message: "There is not enough data to recommend movies." });
   });
 
   test("Returns message if no new recommendations are found", async () => {
@@ -109,7 +109,7 @@ describe("Recommendation Service", () => {
 
     const result = await getRecommendedMovies(3);
 
-    expect(result).toEqual({ message: "No se encontraron recomendaciones nuevas." });
+    expect(result).toEqual({ message: "No new recommendations were found." });
   });
 
   test("Returns message if no genres are found to recommend", async () => {
@@ -117,14 +117,14 @@ describe("Recommendation Service", () => {
 
     const result = await getRecommendedMovies(6);
 
-    expect(result).toEqual({ message: "No hay suficientes datos para recomendar películas." });
+    expect(result).toEqual({ message: "There is not enough data to recommend movies." });
   });
 
   test("Handles Prisma error and throws generic error", async () => {
-    ratingFindManyMock.mockRejectedValue(new Error("Fallo Prisma"));
+    ratingFindManyMock.mockRejectedValue(new Error("Prisma Failure"));
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    await expect(getRecommendedMovies(7)).rejects.toThrow("Error al acceder a la base de datos.");
+    await expect(getRecommendedMovies(7)).rejects.toThrow("Error accessing the database.");
     spy.mockRestore();
   });
 });

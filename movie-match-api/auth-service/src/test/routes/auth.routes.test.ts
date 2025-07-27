@@ -55,7 +55,7 @@ describe("Auth Routes", () => {
     });
 
     it("should return 400 if registration fails", async () => {
-      (registerUser as jest.Mock).mockRejectedValue(new Error("Registro fallido"));
+      (registerUser as jest.Mock).mockRejectedValue(new Error("Registration failed"));
 
       const res = await request(app)
         .post("/api/auth/register")
@@ -66,7 +66,7 @@ describe("Auth Routes", () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty("error", "Registro fallido");
+      expect(res.body).toHaveProperty("error", "Registration failed");
     });
   });
 

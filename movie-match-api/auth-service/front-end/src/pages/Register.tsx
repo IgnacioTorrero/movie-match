@@ -31,8 +31,8 @@ export default function Register() {
       setForm({ name: '', email: '', password: '' });
     } catch (err: unknown) {
       const msg = err instanceof Error
-        ? err.message.includes('[object') ? 'Error de validación. Verificá los campos ingresados.' : err.message
-        : 'Error desconocido';
+        ? err.message.includes('[object') ? 'Validation error. Please check the fields entered.' : err.message
+        : 'Unknown error';
       setError(msg);
     }
   };
@@ -40,7 +40,7 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
       <div className="bg-white p-10 rounded-2xl shadow-lg w-full max-w-xl">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Registro</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Register</h1>
 
         <input className="w-full p-3 mb-3 border rounded-lg text-sm" placeholder="Nombre" name="name" value={form.name} onChange={handleChange} />
         <input className="w-full p-3 mb-3 border rounded-lg text-sm" placeholder="Email" name="email" value={form.email} onChange={handleChange} />
@@ -87,12 +87,12 @@ export default function Register() {
             onClick={register}
             disabled={!form.name || !form.email || !form.password}
           >
-            Registrarse
+            Register
           </button>
         </div>
 
         {error && <p className="text-red-600 mt-4 text-center text-sm">{error}</p>}
-        {user && <p className="text-green-600 mt-2 text-sm text-center">Registrado como: {user.email}</p>}
+        {user && <p className="text-green-600 mt-2 text-sm text-center">Registered as: {user.email}</p>}
       </div>
     </div>
   );
