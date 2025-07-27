@@ -14,20 +14,20 @@ dotenv.config();
 const app = express();
 const PORT = 3005;
 
-// ✅ Middleware base
+// ✅ Base middleware
 app.use(express.json());
 
-// ✅ CORS abierto
+// ✅ Open CORS
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// ✅ Helmet SIN Content Security Policy
+// ✅ Helmet WITHOUT Content Security Policy
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// ✅ Política CSP permisiva para evitar el error de fetch
+// ✅ Permissive CSP policy to avoid fetch errors
 app.use((req, res, next) => {
   res.setHeader("Content-Security-Policy", "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;");
   next();
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 
 app.use(morgan('dev'));
 
-// 🔁 Proxys API
+// 🔁 API Proxies
 app.use('/api/auth', proxy('http://auth-service:3000', {
   proxyReqPathResolver: req => req.originalUrl
 }));
@@ -56,11 +56,11 @@ app.use('/api/recommendations', verifyJWT, proxy('http://recommendation-service:
   proxyReqPathResolver: req => req.originalUrl
 }));
 
-// 🖼️ Frontends compilados
+// 🖼️ Compiled frontends
 app.use('/auth', express.static(path.join(__dirname, '../public/auth')));
 app.use('/movies', express.static(path.join(__dirname, '../public/movies')));
 
-// 🔁 Redirección de rutas SPA
+// 🔁 SPA route redirection
 app.get('/auth/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/auth/index.html'));
 });
@@ -77,14 +77,14 @@ const sslOptions = {
   cert: fs.readFileSync(path.join(__dirname, '../ssl/cert.pem')),
 };
 
-// Producción
+// Production
 /*
 https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`✅ API Gateway HTTPS en https://localhost:${PORT}`);
+  console.log(`✅ API Gateway HTTPS at https://localhost:${PORT}`);
 });
 */
 
-//Desarrollo
+// Development
 http.createServer(app).listen(PORT, () => {
-  console.log(`✅ API Gateway HTTP en https://localhost:${PORT}`);
+  console.log(`✅ API Gateway HTTP at https://localhost:${PORT}`);
 });
