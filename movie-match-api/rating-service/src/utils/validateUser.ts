@@ -12,6 +12,6 @@ export async function validateUser(userId: number): Promise<boolean> {
   } catch (error : any) {
     console.log("🔎 AUTH_SERVICE_URL:", process.env.AUTH_SERVICE_URL);
     console.error("❌ Error al validar usuario:", error?.response?.status, error?.message);
-    return false; // 404 o error de red
+    return false; // 404 or network error
   }
 }

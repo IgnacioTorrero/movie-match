@@ -2,13 +2,13 @@ import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
 
 /**
- * Crea o actualiza una calificación para una película determinada por un usuario.
+ * Creates or updates a rating for a given movie by a user.
  * 
- * @param userId - ID del usuario que califica
- * @param movieId - ID de la película a calificar
- * @param score - Puntuación entre 1 y 5
- * @returns Calificación creada o actualizada
- * @throws Error si los datos son inválidos o hay problemas con la base de datos
+ * @param userId - ID of the user rating the movie
+ * @param movieId - ID of the movie to be rated
+ * @param score - Rating score between 1 and 5
+ * @returns The created or updated rating
+ * @throws Error if the input data is invalid or there are database issues
  */
 export const rateMovie = async (
   userId: number,
