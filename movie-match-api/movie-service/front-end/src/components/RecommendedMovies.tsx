@@ -17,7 +17,7 @@ const RecommendedMovies = () => {
           setMessage("");
         } else {
           setRecommended([]);
-          setMessage("No se encontraron recomendaciones nuevas.");
+          setMessage("No new recommendations were found.");
         }
       } else if (res.data?.message) {
         setRecommended([]);
@@ -25,7 +25,7 @@ const RecommendedMovies = () => {
       }
     } catch {
       setRecommended([]);
-      setMessage("No se pudieron cargar las recomendaciones.");
+      setMessage("The recommendations could not be loaded.");
     }
   };
 
@@ -57,9 +57,9 @@ const RecommendedMovies = () => {
         <button
           onClick={handleRefresh}
           className="text-blue-600 hover:text-blue-800 hover:underline text-sm flex items-center gap-1 focus:outline-none"
-          title="Actualizar recomendaciones"
+          title="Update recommendations"
         >
-          <span className="text-lg">↻</span> Actualizar
+          <span className="text-lg">↻</span> Update
         </button>
       </div>
       <div className="grid gap-4">

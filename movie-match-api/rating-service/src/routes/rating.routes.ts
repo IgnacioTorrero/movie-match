@@ -9,8 +9,8 @@ const router = Router();
 
 /**
  * @route   POST /rate
- * @desc    Registra o actualiza una calificación para una película
- * @access  Privado (requiere JWT)
+ * @desc    Registers or updates a rating for a movie
+ * @access  Private (requires JWT)
  */
 router.post(
   "/rate",

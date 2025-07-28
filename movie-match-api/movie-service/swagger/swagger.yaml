@@ -1,16 +1,16 @@
 openapi: 3.0.0
 info:
   title: Movie Service API
-  description: API para gestionar películas (crear, leer, actualizar, eliminar).
+  description: API for managing movies (create, read, update, delete).
   version: 1.0.0
 servers:
   - url: http://localhost:3002/api
-    description: Servidor local para el movie-service
+    description: Local server for the movie-service
 paths:
   /movies:
     post:
-      summary: Crear una nueva película
-      description: Crea una nueva película en el sistema.
+      summary: Create a new movie
+      description: Create a new movie in the system.
       operationId: createMovie
       security:
         - BearerAuth: []
@@ -44,7 +44,7 @@ paths:
                   example: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
       responses:
         '201':
-          description: Película creada con éxito
+          description: Successfully created movie
           content:
             application/json:
               schema:
@@ -69,12 +69,12 @@ paths:
                     type: string
                     example: "A thief who steals corporate secrets..."
         '400':
-          description: Datos inválidos
+          description: Invalid data
 
   /movies:
     get:
-      summary: Obtener todas las películas con filtros y paginación
-      description: Obtiene una lista de películas filtradas por género, director, año, etc.
+      summary: Get all movies with filters and pagination
+      description: Get a list of movies filtered by genre, director, year, etc.
       operationId: getMovies
       security:
         - BearerAuth: []
@@ -83,32 +83,32 @@ paths:
           in: query
           schema:
             type: string
-          description: Filtro por género
+          description: Filter by gender
         - name: director
           in: query
           schema:
             type: string
-          description: Filtro por director
+          description: Filter by director
         - name: year
           in: query
           schema:
             type: integer
-          description: Filtro por año
+          description: Filter by year
         - name: page
           in: query
           schema:
             type: integer
             default: 1
-          description: Número de página para paginación
+          description: Page number for pagination
         - name: limit
           in: query
           schema:
             type: integer
             default: 5
-          description: Número de resultados por página
+          description: Number of results per page
       responses:
         '200':
-          description: Lista de películas con filtros y paginación
+          description: Movie list with filters and pagination
           content:
             application/json:
               schema:
@@ -147,12 +147,12 @@ paths:
                           type: string
                           example: "A thief who steals corporate secrets..."
         '400':
-          description: Error en la solicitud
+          description: Request error
 
   /movies/{id}:
     get:
-      summary: Obtener una película por ID
-      description: Obtiene los detalles de una película por su ID.
+      summary: Get a movie by ID
+      description: Gets the details of a movie by its ID.
       operationId: getMovieById
       security:
         - BearerAuth: []
@@ -162,10 +162,10 @@ paths:
           required: true
           schema:
             type: integer
-          description: ID de la película
+          description: movie ID
       responses:
         '200':
-          description: Película obtenida con éxito
+          description: Successfully obtained film
           content:
             application/json:
               schema:
@@ -190,12 +190,12 @@ paths:
                     type: string
                     example: "A thief who steals corporate secrets..."
         '404':
-          description: Película no encontrada
+          description: Movie not found
 
   /movies/{id}:
     put:
-      summary: Actualizar una película
-      description: Actualiza la información de una película existente.
+      summary: Update a movie
+      description: Updates the information of an existing movie.
       operationId: updateMovie
       security:
         - BearerAuth: []
@@ -205,7 +205,7 @@ paths:
           required: true
           schema:
             type: integer
-          description: ID de la película
+          description: movie ID
       requestBody:
         required: true
         content:
@@ -236,16 +236,16 @@ paths:
                   example: "A thief who steals corporate secrets..."
       responses:
         '200':
-          description: Película actualizada con éxito
+          description: Successfully updated movie
         '404':
-          description: Película no encontrada
+          description: Movie not found
         '400':
-          description: Datos inválidos
+          description: Invalid data
 
   /movies/{id}:
     delete:
-      summary: Eliminar una película
-      description: Elimina una película por su ID.
+      summary: Delete a movie
+      description: Delete a movie by its ID.
       operationId: deleteMovie
       security:
         - BearerAuth: []
@@ -255,14 +255,14 @@ paths:
           required: true
           schema:
             type: integer
-          description: ID de la película
+          description: movie ID
       responses:
         '200':
-          description: Película eliminada con éxito
+          description: Movie successfully deleted
         '404':
-          description: Película no encontrada
+          description: Movie not found
         '500':
-          description: Error al eliminar la película
+          description: Error deleting movie
 
 components:
   securitySchemes:

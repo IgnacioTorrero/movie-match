@@ -7,6 +7,7 @@ import {
   deleteMovie,
 } from "../../services/movie.service";
 
+// Mock Prisma Client
 jest.mock("@prisma/client", () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
@@ -65,6 +66,7 @@ jest.mock("@prisma/client", () => {
   };
 });
 
+// Mock Redis client
 jest.mock("../../utils/redisClient", () => ({
   del: jest.fn(),
 }));
@@ -74,7 +76,7 @@ beforeAll(() => {
 });
 
 describe("Movie Service", () => {
-  test("Debe crear una película correctamente", async () => {
+  test("Should create a movie successfully", async () => {
     const movie = await createMovie(
       1,
       "Inception",
@@ -91,26 +93,26 @@ describe("Movie Service", () => {
     expect(movie.genre).toBe("Sci-Fi");
   });
 
-  test("Debe obtener una lista de películas con filtros y paginación", async () => {
+  test("Should get a list of movies with filters and pagination", async () => {
     const movies = await getMovies(1, {}, 5, 0);
 
     expect(movies.length).toBeGreaterThan(0);
     expect(movies[0]).toHaveProperty("title", "Inception");
   });
 
-  test("Debe contar el total de películas que cumplen los filtros", async () => {
+  test("Should count total movies that match filters", async () => {
     const totalMovies = await countMoviesByUser(1, {});
     expect(totalMovies).toBe(1);
   });
 
-  test("Debe obtener una película por ID", async () => {
+  test("Should retrieve a movie by ID", async () => {
     const movie = await getMovieById(1, 1);
     expect(movie).not.toBeNull();
     expect(movie?.title).toBe("Inception");
     expect(movie?.userRating).toBe(5);
   });
 
-  test("Debe actualizar una película correctamente", async () => {
+  test("Should update a movie successfully", async () => {
     const updatedMovie = await updateMovie(
       1,
       "Interstellar",
@@ -125,7 +127,7 @@ describe("Movie Service", () => {
     expect(updatedMovie.year).toBe(2014);
   });
 
-  test("Debe eliminar una película correctamente", async () => {
+  test("Should delete a movie successfully", async () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
     const redis = require("../../utils/redisClient");
@@ -161,7 +163,7 @@ describe("Movie Service", () => {
     expect(redis.del).toHaveBeenCalledWith("recommendations:3");
   });
 
-  test("Debe lanzar error si la película no existe", async () => {
+  test("Should throw error if movie does not exist", async () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
     mockInstance.movie.findFirst.mockResolvedValue(null);
@@ -169,7 +171,7 @@ describe("Movie Service", () => {
     await expect(getMovieById(999, 1)).rejects.toThrow("Película no encontrada");
   });
 
-  test("Debe lanzar error si falla al eliminar una película", async () => {
+  test("Should throw error if deleting a movie fails", async () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
     mockInstance.userMovies.findMany.mockImplementation(() => {
@@ -179,7 +181,7 @@ describe("Movie Service", () => {
     await expect(deleteMovie(1)).rejects.toThrow("Movie not found");
   });
 
-  test("Debe lanzar error si falla al crear una película", async () => {
+  test("Should throw error if creating a movie fails", async () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
     mockInstance.movie.create.mockRejectedValueOnce(new Error("DB create error"));
@@ -189,7 +191,7 @@ describe("Movie Service", () => {
     ).rejects.toThrow("Error al crear la película: DB create error");
   });
 
-  test("Debe devolver 'No hay rate' si el usuario no calificó la película", async () => {
+  test("Should return 'No hay rate' if user did not rate the movie", async () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
 

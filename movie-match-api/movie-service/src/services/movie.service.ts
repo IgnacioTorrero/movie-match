@@ -3,15 +3,15 @@ import redis from "../utils/redisClient";
 import { Movie, MovieWithUserRating } from "../movie";
 
 /**
- * Crea una nueva película y la asocia al usuario que la crea.
+ * Creates a new movie and associates it with the user who created it.
  * 
- * @param userId - ID del usuario que crea la película
- * @param title - Título de la película
- * @param director - Director de la película
- * @param year - Año de estreno
- * @param genre - Género
- * @param synopsis - Sinopsis (opcional)
- * @returns Objeto de la película creada
+ * @param userId - ID of the user creating the movie
+ * @param title - Title of the movie
+ * @param director - Director of the movie
+ * @param year - Release year
+ * @param genre - Genre
+ * @param synopsis - Synopsis (optional)
+ * @returns Created movie object
  */
 const createMovie = async (
   userId: number,
@@ -41,14 +41,14 @@ const createMovie = async (
 };
 
 /**
- * Devuelve una lista paginada de películas asociadas a un usuario,
- * permitiendo aplicar filtros por campo.
+ * Returns a paginated list of movies associated with a user,
+ * allowing filtering by field.
  * 
- * @param userId - ID del usuario
- * @param filters - Filtros aplicables (género, director, año, etc.)
- * @param take - Cantidad de resultados por página
- * @param skip - Cantidad de resultados a omitir (para paginación)
- * @returns Lista de películas
+ * @param userId - User ID
+ * @param filters - Applicable filters (genre, director, year, etc.)
+ * @param take - Number of results per page
+ * @param skip - Number of results to skip (for pagination)
+ * @returns List of movies
  */
 export const getMoviesByUser = async (
   userId: number,
@@ -74,12 +74,12 @@ export const getMoviesByUser = async (
 };
 
 /**
- * Cuenta la cantidad total de películas que coinciden con los filtros
- * y pertenecen al usuario.
+ * Counts the total number of movies that match the filters
+ * and belong to the user.
  * 
- * @param userId - ID del usuario
- * @param filters - Filtros aplicables
- * @returns Número total de películas encontradas
+ * @param userId - User ID
+ * @param filters - Applicable filters
+ * @returns Total number of movies found
  */
 const countMoviesByUser = async (
   userId: number,
@@ -100,12 +100,12 @@ const countMoviesByUser = async (
 };
 
 /**
- * Obtiene una película por su ID, validando que pertenezca al usuario.
- * También devuelve el puntaje que le dio ese usuario si existe.
+ * Retrieves a movie by its ID, validating that it belongs to the user.
+ * Also returns the score the user gave it, if any.
  * 
- * @param id - ID de la película
- * @param userId - ID del usuario autenticado
- * @returns Objeto de la película con posible score del usuario
+ * @param id - Movie ID
+ * @param userId - Authenticated user ID
+ * @returns Movie object with optional user score
  */
 const getMovieById = async (
   id: number,
@@ -138,11 +138,11 @@ const getMovieById = async (
 };
 
 /**
- * Verifica si una película pertenece al usuario autenticado.
+ * Checks whether a movie belongs to the authenticated user.
  * 
- * @param movieId - ID de la película
- * @param userId - ID del usuario
- * @returns true si pertenece, false si no
+ * @param movieId - Movie ID
+ * @param userId - User ID
+ * @returns true if it belongs, false otherwise
  */
 const movieBelongsToUser = async (
   movieId: number,
@@ -155,15 +155,15 @@ const movieBelongsToUser = async (
 };
 
 /**
- * Actualiza una película existente. Solo se ejecuta si pertenece al usuario.
+ * Updates an existing movie. Only runs if it belongs to the user.
  * 
- * @param id - ID de la película
- * @param title - Nuevo título
- * @param director - Nuevo director
- * @param year - Nuevo año
- * @param genre - Nuevo género
- * @param synopsis - Nueva sinopsis (opcional)
- * @returns Película actualizada
+ * @param id - Movie ID
+ * @param title - New title
+ * @param director - New director
+ * @param year - New year
+ * @param genre - New genre
+ * @param synopsis - New synopsis (optional)
+ * @returns Updated movie
  */
 const updateMovie = async (
   id: number,
@@ -187,15 +187,15 @@ const updateMovie = async (
 };
 
 /**
- * Elimina una película, sus relaciones con usuarios y sus calificaciones.
- * Limpia la caché de recomendaciones en Redis para todos los usuarios vinculados.
+ * Deletes a movie, its relationships with users, and its ratings.
+ * Clears Redis cache for recommendations of all related users.
  * 
- * @param id - ID de la película
- * @returns Película eliminada
+ * @param id - Movie ID
+ * @returns Deleted movie
  */
 const deleteMovie = async (id: number): Promise<Movie> => {
   try {
-    // Obtener todos los userId que tienen relación con la película (por rating o por userMovies)
+    // Get all userIds that have a relationship with the movie (via rating or userMovies)
     const [ratingUsers, movieUsers] = await Promise.all([
       prisma.rating.findMany({
         where: { movieId: id },
@@ -211,13 +211,13 @@ const deleteMovie = async (id: number): Promise<Movie> => {
       new Set([...ratingUsers, ...movieUsers].map((u) => u.userId))
     );
 
-    // Eliminar relaciones antes de borrar la película
+    // Delete relationships before deleting the movie
     await prisma.rating.deleteMany({ where: { movieId: id } });
     await prisma.userMovies.deleteMany({ where: { movieId: id } });
 
     const deleted = await prisma.movie.delete({ where: { id } });
 
-    // Limpiar caché de recomendaciones de todos los usuarios involucrados
+    // Clear recommendations cache for all involved users
     for (const userId of allUserIds) {
       await redis.del(`recommendations:${userId}`);
     }
@@ -229,7 +229,7 @@ const deleteMovie = async (id: number): Promise<Movie> => {
   }
 };
 
-// Exportación explícita para mayor control
+// Explicit export for greater control
 export {
   createMovie,
   getMoviesByUser as getMovies,

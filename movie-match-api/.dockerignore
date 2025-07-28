@@ -1,4 +1,4 @@
-# ⚠️ Exclusión recursiva obligatoria
+# ⚠️ Mandatory recursive exclusion
 **/node_modules
 **/dist
 
@@ -10,7 +10,7 @@ dist
 *.spec.*
 *.tsbuildinfo
 
-# Entornos y configs
+# Environments and configs
 .env
 .env.*
 .vscode
@@ -20,10 +20,10 @@ dist
 package-lock.json
 yarn.lock
 
-# Output de frontends
+# Frontend output
 auth-service/front-end/.env
 movie-service/front-end/.env
 rating-service/front-end/.env
 
-# Opcional: excluir coverage y test outputs
+# Optional: exclude coverage and test outputs
 coverage

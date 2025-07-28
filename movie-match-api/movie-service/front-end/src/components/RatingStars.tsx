@@ -16,22 +16,22 @@ const RatingStars = ({ movieId, initialScore = 0 }: RatingStarsProps) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setMessage("Debes estar logueado para calificar.");
+        setMessage("You must be logged in to rate.");
         return;
       }
 
       await ratingApi.post("/rate", { movieId, score });
 
       setRating(score);
-      setMessage("Calificación enviada exitosamente.");
+      setMessage("Rating sent successfully.");
     } catch (err: any) {
-      setMessage("Error al enviar calificación.");
+      setMessage("Error submitting rating.");
     }
   };
 
   return (
     <div className="mt-4">
-      <p className="mb-1 font-semibold text-gray-700">Calificá esta película:</p>
+      <p className="mb-1 font-semibold text-gray-700">Rate this movie:</p>
       <div className="flex items-center space-x-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <FaStar

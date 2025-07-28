@@ -20,6 +20,7 @@ beforeAll(() => {
   mockGetMovieById = jest.fn();
   mockMovieBelongsToUser = jest.fn();
 
+  // Mock JWT authentication
   jest.doMock("../../middlewares/auth.middleware", () => ({
     authenticateToken: (req: any, res: any, next: any) => {
       req.user = { id: 1 };
@@ -27,6 +28,7 @@ beforeAll(() => {
     },
   }));
 
+  // Mock movie service methods
   jest.doMock("../../services/movie.service", () => ({
     createMovie: mockCreateMovie,
     getMoviesByUser: mockGetMoviesByUser,
@@ -49,7 +51,7 @@ beforeEach(() => {
 });
 
 describe("Movie Routes", () => {
-  test("POST /movies - debería crear una película", async () => {
+  test("POST /movies - should create a movie", async () => {
     mockCreateMovie.mockResolvedValueOnce({
       id: 1,
       title: "Test Movie",
@@ -71,7 +73,7 @@ describe("Movie Routes", () => {
     expect(res.body.title).toBe("Test Movie");
   });
 
-  test("GET /movies - debería listar películas", async () => {
+  test("GET /movies - should list movies", async () => {
     mockGetMoviesByUser.mockResolvedValueOnce([
       {
         id: 1,
@@ -91,7 +93,7 @@ describe("Movie Routes", () => {
     expect(res.body.totalMovies).toBe(1);
   });
 
-  test("PUT /movies/:id - debería actualizar una película", async () => {
+  test("PUT /movies/:id - should update a movie", async () => {
     mockMovieBelongsToUser.mockResolvedValueOnce(true);
     mockUpdateMovie.mockResolvedValueOnce({
       id: 1,
@@ -114,7 +116,7 @@ describe("Movie Routes", () => {
     expect(res.body.title).toBe("Updated Movie");
   });
 
-  test("DELETE /movies/:id - debería eliminar una película", async () => {
+  test("DELETE /movies/:id - should delete a movie", async () => {
     mockMovieBelongsToUser.mockResolvedValueOnce(true);
     mockDeleteMovie.mockResolvedValueOnce({ id: 1, title: "Deleted Movie" });
 
@@ -124,7 +126,7 @@ describe("Movie Routes", () => {
     expect(res.body.title).toBe("Deleted Movie");
   });
 
-  test("GET /movies/:id - debería devolver una película con rating", async () => {
+  test("GET /movies/:id - should return a movie with rating", async () => {
     mockGetMovieById.mockResolvedValueOnce({
       id: 1,
       title: "Test Movie",
@@ -141,7 +143,7 @@ describe("Movie Routes", () => {
     expect(res.body.userRating).toBe(4);
   });
 
-  test("GET /movies/:id - debería devolver 404 si no existe", async () => {
+  test("GET /movies/:id - should return 404 if not found", async () => {
     mockGetMovieById.mockImplementationOnce(() => {
       throw new Error("Película no encontrada");
     });
@@ -152,7 +154,7 @@ describe("Movie Routes", () => {
     expect(res.body.error).toBe("Movie not found");
   });
 
-  test("POST /movies - debería manejar error al crear", async () => {
+  test("POST /movies - should handle error on creation", async () => {
     mockCreateMovie.mockImplementationOnce(() => {
       throw new Error("Fallo al crear");
     });
@@ -169,7 +171,7 @@ describe("Movie Routes", () => {
     expect(res.body.error).toBe("Fallo al crear");
   });
 
-  test("GET /movies - debería manejar error al listar", async () => {
+  test("GET /movies - should handle error on listing", async () => {
     mockGetMoviesByUser.mockImplementationOnce(() => {
       throw new Error("Fallo al listar");
     });
@@ -180,7 +182,7 @@ describe("Movie Routes", () => {
     expect(res.body.error).toBe("Fallo al listar");
   });
 
-  test("PUT /movies/:id - 404 si no pertenece al usuario", async () => {
+  test("PUT /movies/:id - 404 if movie does not belong to user", async () => {
     mockMovieBelongsToUser.mockResolvedValueOnce(false);
 
     const res = await request(app).put("/movies/99").send({
@@ -195,7 +197,7 @@ describe("Movie Routes", () => {
     expect(res.body.error).toBe("Movie not found or unauthorized");
   });
 
-  test("DELETE /movies/:id - 404 si no pertenece al usuario", async () => {
+  test("DELETE /movies/:id - 404 if movie does not belong to user", async () => {
     mockMovieBelongsToUser.mockResolvedValueOnce(false);
 
     const res = await request(app).delete("/movies/99");
@@ -204,7 +206,7 @@ describe("Movie Routes", () => {
     expect(res.body.error).toBe("Movie not found or unauthorized");
   });
 
-  test("GET /movies/:id - error inesperado", async () => {
+  test("GET /movies/:id - unexpected error", async () => {
     mockGetMovieById.mockRejectedValueOnce(new Error("Error inesperado"));
 
     const res = await request(app).get("/movies/1");
@@ -213,7 +215,7 @@ describe("Movie Routes", () => {
     expect(res.body.error).toBe("Error inesperado");
   });
 
-  test("PUT /movies/:id - error inesperado", async () => {
+  test("PUT /movies/:id - unexpected update error", async () => {
     mockMovieBelongsToUser.mockResolvedValueOnce(true);
     mockUpdateMovie.mockImplementationOnce(() => {
       throw new Error("Fallo en update");
@@ -231,7 +233,7 @@ describe("Movie Routes", () => {
     expect(res.body.error).toBe("Fallo en update");
   });
 
-  test("DELETE /movies/:id - error inesperado", async () => {
+  test("DELETE /movies/:id - unexpected delete error", async () => {
     mockMovieBelongsToUser.mockResolvedValueOnce(true);
     mockDeleteMovie.mockImplementationOnce(() => {
       throw new Error("Fallo al borrar");

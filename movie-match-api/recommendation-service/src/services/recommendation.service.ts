@@ -2,18 +2,18 @@ import { prisma } from "../prisma";
 import redis from "../utils/redisClient";
 
 /**
- * Genera recomendaciones de películas para un usuario basado en sus calificaciones previas.
+ * Generates movie recommendations for a user based on their previous ratings.
  *
- * @param userId - ID del usuario autenticado
- * @returns Lista de películas recomendadas o un mensaje informativo
- * @throws Error si falla la conexión a la base de datos
+ * @param userId - Authenticated user's ID
+ * @returns List of recommended movies or an informative message
+ * @throws Error if database access fails
  */
 export const getRecommendedMovies = async (userId: number): Promise<any> => {
   const cacheKey = `recommendations:${userId}`;
   const cached = await redis.get(cacheKey);
 
   if (cached) {
-    console.log("📦 Recomendaciones desde caché");
+    console.log("📦 Recommendations from cache");
     return JSON.parse(cached);
   }
 
@@ -25,8 +25,8 @@ export const getRecommendedMovies = async (userId: number): Promise<any> => {
       include: { movie: true },
     });
   } catch (error) {
-    console.error("Error al obtener calificaciones:", error);
-    throw new Error("Error al acceder a la base de datos.");
+    console.error("Error getting ratings:", error);
+    throw new Error("Error accessing the database.");
   }
 
   const ratedMovieIds = allRated
@@ -38,10 +38,10 @@ export const getRecommendedMovies = async (userId: number): Promise<any> => {
   );
 
   if (highRatedMovies.length === 0) {
-    return { message: "No hay suficientes datos para recomendar películas." };
+    return { message: "There is not enough data to recommend movies." };
   }
 
-  // 📊 Contar géneros más frecuentes
+  // 📊 Count the most frequent genres
   const genreCount: Record<string, number> = {};
   highRatedMovies.forEach(({ movie }) => {
     movie.genre.split("/").forEach((genre: string) => {
@@ -50,7 +50,7 @@ export const getRecommendedMovies = async (userId: number): Promise<any> => {
   });
 
   if (Object.keys(genreCount).length === 0) {
-    return { message: "No se encontraron géneros para recomendar películas." };
+    return { message: "No genres were found to recommend movies." };
   }
 
   const maxCount = Math.max(...Object.values(genreCount));
@@ -58,7 +58,7 @@ export const getRecommendedMovies = async (userId: number): Promise<any> => {
     .filter(([_, count]) => count === maxCount)
     .map(([genre]) => genre);
 
-  // 🎥 Buscar nuevas películas del mismo género no vistas
+  // 🎥 Search for new unseen movies of the same genre
   const recommendedMovies = await prisma.movie.findMany({
     where: {
       AND: [
@@ -78,7 +78,7 @@ export const getRecommendedMovies = async (userId: number): Promise<any> => {
   const validRecommendations = recommendedMovies.filter((m: { id?: number }) => m && m.id);
 
   if (validRecommendations.length === 0) {
-    return { message: "No se encontraron recomendaciones nuevas." };
+    return { message: "No new recommendations were found." };
   }
 
   await redis.set(cacheKey, JSON.stringify(validRecommendations), "EX", 600);

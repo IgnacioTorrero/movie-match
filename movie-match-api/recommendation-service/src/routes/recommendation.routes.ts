@@ -7,8 +7,8 @@ const router = Router();
 
 /**
  * @route   GET /recommendations
- * @desc    Obtiene recomendaciones personalizadas para el usuario autenticado
- * @access  Privado (requiere JWT)
+ * @desc    Retrieves personalized recommendations for the authenticated user
+ * @access  Private (requires JWT)
  */
 router.get(
   "/",
@@ -18,7 +18,7 @@ router.get(
       const userId = (req as any).user?.id;
 
       if (!userId) {
-        res.status(400).json({ error: "User ID no proporcionado." });
+        res.status(400).json({ error: "User ID not provided." });
         return;
       }
 
@@ -26,15 +26,15 @@ router.get(
       res.status(200).json(recommendations);
     } catch (error: any) {
       console.error("[GET /recommendations] Error:", error);
-      res.status(500).json({ error: error.message || "Error al obtener recomendaciones." });
+      res.status(500).json({ error: error.message || "Error getting recommendations." });
     }
   }
 );
 
 /**
  * @route   DELETE /recommendations/cache
- * @desc    Elimina la caché de recomendaciones del usuario autenticado
- * @access  Privado (requiere JWT)
+ * @desc    Deletes the recommendation cache for the authenticated user
+ * @access  Private (requires JWT)
  */
 router.delete(
   "/cache",
@@ -44,15 +44,15 @@ router.delete(
       const userId = (req as any).user?.id;
 
       if (!userId) {
-        res.status(400).json({ error: "User ID no proporcionado." });
+        res.status(400).json({ error: "User ID not provided." });
         return;
       }
 
       await redis.del(`recommendations:${userId}`);
-      res.status(200).json({ message: "Caché de recomendaciones borrada correctamente." });
+      res.status(200).json({ message: "Recommendation cache successfully cleared." });
     } catch (error: any) {
       console.error("[DELETE /recommendations/cache] Error:", error);
-      res.status(500).json({ error: error.message || "Error al borrar la caché de recomendaciones." });
+      res.status(500).json({ error: error.message || "Error clearing recommendation cache." });
     }
   }
 );

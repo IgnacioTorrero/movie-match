@@ -39,7 +39,7 @@ describe("Recommendation Routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Simular autenticación
+    // Simulate authentication
     (authMiddleware.authenticateToken as jest.Mock).mockImplementation(
       (req, _res, next) => {
         req.user = mockUser;
@@ -48,8 +48,8 @@ describe("Recommendation Routes", () => {
     );
   });
 
-  test("GET /recommendations debería devolver recomendaciones exitosamente", async () => {
-    const mockRecs = [{ id: 1, title: "Pelicula recomendada" }];
+  test("GET /recommendations should return recommendations successfully", async () => {
+    const mockRecs = [{ id: 1, title: "Recommended movie" }];
     (recommendationService.getRecommendedMovies as jest.Mock).mockResolvedValue(mockRecs);
 
     const res = await request(app).get("/recommendations");
@@ -59,39 +59,39 @@ describe("Recommendation Routes", () => {
     expect(recommendationService.getRecommendedMovies).toHaveBeenCalledWith(mockUser.id);
   });
 
-  test("GET /recommendations debería manejar errores del servicio", async () => {
+  test("GET /recommendations should handle service errors", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-    (recommendationService.getRecommendedMovies as jest.Mock).mockRejectedValue(new Error("Fallo en recomendación"));
+    (recommendationService.getRecommendedMovies as jest.Mock).mockRejectedValue(new Error("Failure in recommendation"));
 
     const res = await request(app).get("/recommendations");
 
     expect(res.status).toBe(500);
-    expect(res.body.error).toBe("Fallo en recomendación");
+    expect(res.body.error).toBe("Failure in recommendation");
     consoleSpy.mockRestore();
   });
 
-  test("DELETE /recommendations/cache debería borrar la caché del usuario", async () => {
+  test("DELETE /recommendations/cache should delete the user's cache", async () => {
     (redisClient.del as jest.Mock).mockResolvedValue(1);
 
     const res = await request(app).delete("/recommendations/cache");
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ message: "Caché de recomendaciones borrada correctamente." });
+    expect(res.body).toEqual({ message: "Recommendation cache successfully cleared." });
     expect(redisClient.del).toHaveBeenCalledWith(`recommendations:${mockUser.id}`);
   });
 
-  test("DELETE /recommendations/cache debería manejar errores", async () => {
+  test("DELETE /recommendations/cache should handle errors", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-    (redisClient.del as jest.Mock).mockRejectedValue(new Error("Fallo en redis"));
+    (redisClient.del as jest.Mock).mockRejectedValue(new Error("Redis failure"));
 
     const res = await request(app).delete("/recommendations/cache");
 
     expect(res.status).toBe(500);
-    expect(res.body.error).toBe("Fallo en redis");
+    expect(res.body.error).toBe("Redis failure");
     consoleSpy.mockRestore();
   });
 
-  test("GET /recommendations debería devolver 400 si no hay userId", async () => {
+  test("GET /recommendations should return 400 if userId is missing", async () => {
     (authMiddleware.authenticateToken as jest.Mock).mockImplementation((req, _res, next) => {
       req.user = undefined;
       next();
@@ -100,10 +100,10 @@ describe("Recommendation Routes", () => {
     const res = await request(app).get("/recommendations");
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: "User ID no proporcionado." });
+    expect(res.body).toEqual({ error: "User ID not provided." });
   });
 
-  test("DELETE /recommendations/cache debería devolver 400 si no hay userId", async () => {
+  test("DELETE /recommendations/cache should return 400 if userId is missing", async () => {
     (authMiddleware.authenticateToken as jest.Mock).mockImplementation((req, _res, next) => {
       req.user = undefined;
       next();
@@ -112,6 +112,6 @@ describe("Recommendation Routes", () => {
     const res = await request(app).delete("/recommendations/cache");
 
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: "User ID no proporcionado." });
+    expect(res.body).toEqual({ error: "User ID not provided." });
   });
 });

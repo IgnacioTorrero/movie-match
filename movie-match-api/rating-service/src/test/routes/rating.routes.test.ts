@@ -24,7 +24,7 @@ beforeEach(async () => {
     __esModule: true,
     prisma: {
       movie: {
-        findUnique: jest.fn().mockResolvedValue({ id: 10, title: "Pelicula falsa" }),
+        findUnique: jest.fn().mockResolvedValue({ id: 10, title: "Fake movie" }),
       },
       rating: {
         findFirst: jest.fn(),
@@ -56,7 +56,7 @@ beforeEach(async () => {
 });
 
 describe("Rating Routes", () => {
-  test("POST /rate - debería calificar correctamente una película", async () => {
+  test("POST /rate - should successfully rate a movie", async () => {
     validateUser.mockResolvedValue(true);
     rateMovie.mockResolvedValue({ id: 1, score: 5 });
 
@@ -67,7 +67,7 @@ describe("Rating Routes", () => {
     expect(rateMovie).toHaveBeenCalledWith(1, 10, 5);
   });
 
-  test("POST /rate - debería devolver 401 si el usuario no es válido", async () => {
+  test("POST /rate - should return 401 if the user is invalid", async () => {
     validateUser.mockResolvedValue(false);
 
     const res = await request(app).post("/rate").send({ movieId: 10, score: 5 });
@@ -76,13 +76,13 @@ describe("Rating Routes", () => {
     expect(res.body.error).toContain("Unauthorized or invalid user.");
   });
 
-  test("POST /rate - debería manejar errores del servicio rateMovie", async () => {
+  test("POST /rate - should handle rateMovie service errors", async () => {
     validateUser.mockResolvedValue(true);
-    rateMovie.mockRejectedValue(new Error("Fallo inesperado"));
+    rateMovie.mockRejectedValue(new Error("Unexpected failure"));
 
     const res = await request(app).post("/rate").send({ movieId: 10, score: 3 });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toBe("Fallo inesperado");
+    expect(res.body.error).toBe("Unexpected failure");
   });
 });

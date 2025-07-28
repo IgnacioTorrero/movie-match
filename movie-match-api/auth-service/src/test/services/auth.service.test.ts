@@ -33,7 +33,7 @@ jest.mock("@prisma/client", () => {
 });
 
 describe("Auth Service", () => {
-  test("Debe registrar un usuario correctamente", async () => {
+  test("Should register a user successfully", async () => {
     const user = await registerUser("John Doe", "john@example.com", "password123");
 
     expect(user).toHaveProperty("id");
@@ -42,7 +42,7 @@ describe("Auth Service", () => {
     expect(user.password).not.toBe("password123");
   });
 
-  test("Debe permitir login con credenciales correctas", async () => {
+  test("Should allow login with valid credentials", async () => {
     const email = "john@example.com";
     const password = "password123";
 
@@ -54,13 +54,13 @@ describe("Auth Service", () => {
     expect(user.email).toBe(email);
   });
 
-  test("Debe fallar login con credenciales incorrectas", async () => {
+  test("Should fail login with invalid credentials", async () => {
     await expect(loginUser("wrong@example.com", "wrongpassword")).rejects.toThrow("Invalid credentials");
   });
 
-  test("Debe fallar login si la contraseña es incorrecta", async () => {
+  test("Should fail login if password is incorrect", async () => {
     const email = "john@example.com";
-    const passwordIncorrecto = "claveEquivocada";
+    const passwordIncorrecto = "wrongKey";
 
     await expect(loginUser(email, passwordIncorrecto)).rejects.toThrow("Invalid credentials");
   });

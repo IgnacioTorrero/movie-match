@@ -3,7 +3,7 @@ import express, { Express } from "express";
 import userRoutes from "../../routes/user.route";
 import { prisma } from "../../prisma";
 
-// Mock de Prisma
+// Prisma mock
 jest.mock("../../prisma", () => ({
   prisma: {
     user: {
@@ -26,7 +26,7 @@ beforeEach(() => {
 
 describe("User Routes", () => {
   describe("GET /api/users/:id", () => {
-    it("debe devolver el usuario si existe", async () => {
+    it("should return the user if it exists", async () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue({
         id: 1,
         email: "test@example.com"
@@ -41,23 +41,23 @@ describe("User Routes", () => {
       });
     });
 
-    it("debe devolver 400 si el ID no es un número válido", async () => {
+    it("should return 400 if the ID is not a valid number", async () => {
       const res = await request(app).get("/api/users/abc");
 
       expect(res.status).toBe(400);
-      expect(res.body).toEqual({ message: "ID inválido" });
+      expect(res.body).toEqual({ message: "Invalid ID" });
     });
 
-    it("debe devolver 404 si el usuario no existe", async () => {
+    it("should return 404 if the user does not exist", async () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
 
       const res = await request(app).get("/api/users/99");
 
       expect(res.status).toBe(404);
-      expect(res.body).toEqual({ message: "Usuario no encontrado" });
+      expect(res.body).toEqual({ message: "User not found" });
     });
 
-    it("debe devolver 500 si ocurre un error interno", async () => {
+    it("should return 500 if an internal error occurs", async () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       (prisma.user.findUnique as jest.Mock).mockRejectedValue(new Error("DB error"));
@@ -65,7 +65,7 @@ describe("User Routes", () => {
       const res = await request(app).get("/api/users/1");
 
       expect(res.status).toBe(500);
-      expect(res.body).toEqual({ message: "Error interno del servidor" });
+      expect(res.body).toEqual({ message: "Internal Server Error" });
 
       consoleSpy.mockRestore();
     });

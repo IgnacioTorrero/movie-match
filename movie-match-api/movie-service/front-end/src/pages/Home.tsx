@@ -32,7 +32,7 @@ const Home = () => {
       setTotalPages(res.data.totalPages);
       setError("");
     } catch (err: any) {
-      setError("Error al obtener películas");
+      setError("Error getting movies");
     }
   };
 
@@ -67,14 +67,14 @@ const Home = () => {
     <div className="min-h-screen bg-gray-100 flex justify-center px-4 overflow-x-hidden">
       <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md mt-10">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          🎬 Películas
+          🎬 Movies
         </h1>
 
-        {/* Filtros */}
+        {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <input
             type="text"
-            placeholder="Género"
+            placeholder="Genre"
             className="border p-2 rounded shadow-sm"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
@@ -88,7 +88,7 @@ const Home = () => {
           />
           <input
             type="number"
-            placeholder="Año"
+            placeholder="Year"
             className="border p-2 rounded shadow-sm"
             value={year}
             onChange={(e) => setYear(e.target.value)}
@@ -98,7 +98,7 @@ const Home = () => {
         {/* Error */}
         {error && <p className="text-red-600 mb-4">{error}</p>}
 
-        {/* Lista de películas o mensaje vacío */}
+        {/* Movie list or empty message */}
         <div className="grid gap-4 mb-6">
           {movies.length > 0 ? (
             movies.map((movie: any) => (
@@ -107,33 +107,33 @@ const Home = () => {
           ) : (
             <div className="text-center text-gray-500 text-lg flex flex-col items-center mt-8">
               <span className="text-5xl mb-2">🎞️</span>
-              <p>No se encontraron resultados para los filtros ingresados.</p>
+              <p>No results were found for the entered filters.</p>
             </div>
           )}
         </div>
 
-        {/* Paginación */}
+        {/* Pagination */}
         <div className="flex justify-center items-center space-x-4">
           <button
             className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
             disabled={page <= 1}
             onClick={() => setPage((prev) => prev - 1)}
           >
-            ◀ Anterior
+            ◀ Previous
           </button>
           <span className="text-gray-700">
-            Página {page} de {totalPages}
+            Page {page} of {totalPages}
           </span>
           <button
             className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
             disabled={page >= totalPages}
             onClick={() => setPage((prev) => prev + 1)}
           >
-            Siguiente ▶
+            Next ▶
           </button>
         </div>
 
-        {/* 🔽 Recomendaciones */}
+        {/* 🔽 Recommendations */}
         {!genre && !director && !year && <RecommendedMovies />}
       </div>
     </div>

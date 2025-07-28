@@ -41,48 +41,48 @@ beforeAll(() => {
 });
 
 describe("Rating Service", () => {
-  test("Debe crear una calificación si no existe", async () => {
+  test("Should create a rating if it doesn't exist", async () => {
     const rating = await rateMovie(1, 1, 4);
     expect(rating).toHaveProperty("id");
   });
 
-  test("Debe actualizar la calificación si ya existe", async () => {
+  test("Should update the rating if it already exists", async () => {
     const updated = await rateMovie(999, 1, 5);
     expect(updated).toHaveProperty("id", 99);
     expect(updated.score).toBe(5);
   });
 
-  test("Debe lanzar error si la película no existe", async () => {
-    await expect(rateMovie(1, 99, 3)).rejects.toThrow("La película no existe.");
+  test("Should throw an error if the movie does not exist", async () => {
+    await expect(rateMovie(1, 99, 3)).rejects.toThrow("The film does not exist.");
   });
 
-  test("Debe lanzar error si la calificación es inválida", async () => {
-    await expect(rateMovie(1, 1, 0)).rejects.toThrow("La calificación debe estar entre 1 y 5 estrellas.");
-    await expect(rateMovie(1, 1, 6)).rejects.toThrow("La calificación debe estar entre 1 y 5 estrellas.");
+  test("Should throw an error if the score is invalid", async () => {
+    await expect(rateMovie(1, 1, 0)).rejects.toThrow("The rating must be between 1 and 5 stars.");
+    await expect(rateMovie(1, 1, 6)).rejects.toThrow("The rating must be between 1 and 5 stars.");
   });
 
-  test("Debe lanzar error si falta userId o movieId", async () => {
-    await expect(rateMovie(0, 1, 3)).rejects.toThrow("El ID de usuario y el ID de película son requeridos.");
-    await expect(rateMovie(1, 0, 3)).rejects.toThrow("El ID de usuario y el ID de película son requeridos.");
+  test("Should throw an error if userId or movieId is missing", async () => {
+    await expect(rateMovie(0, 1, 3)).rejects.toThrow("User ID and Movie ID are required.");
+    await expect(rateMovie(1, 0, 3)).rejects.toThrow("User ID and Movie ID are required.");
   });
 
-  test("Debe lanzar error al fallar update de calificación", async () => {
+  test("Should throw an error when rating update fails", async () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
 
     mockInstance.rating.findFirst.mockResolvedValueOnce({ id: 99 });
     mockInstance.rating.update.mockRejectedValueOnce(new Error("DB error"));
 
-    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error al actualizar la calificación.");
+    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error updating rating.");
   });
 
-  test("Debe lanzar error al fallar create de calificación", async () => {
+  test("Should throw an error when rating creation fails", async () => {
     const { PrismaClient } = require("@prisma/client");
     const mockInstance = PrismaClient.mock.results[0].value;
 
     mockInstance.rating.findFirst.mockResolvedValueOnce(null);
     mockInstance.rating.create.mockRejectedValueOnce(new Error("DB error"));
 
-    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error al crear la calificación.");
+    await expect(rateMovie(1, 1, 4)).rejects.toThrow("Error creating rating.");
   });
 });

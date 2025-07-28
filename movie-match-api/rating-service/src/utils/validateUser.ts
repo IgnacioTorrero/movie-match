@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 if (!process.env.AUTH_SERVICE_URL) {
-  throw new Error("AUTH_SERVICE_URL no definida");
+  throw new Error("AUTH_SERVICE_URL not defined");
 }
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
@@ -11,7 +11,7 @@ export async function validateUser(userId: number): Promise<boolean> {
     return response.status === 200;
   } catch (error : any) {
     console.log("🔎 AUTH_SERVICE_URL:", process.env.AUTH_SERVICE_URL);
-    console.error("❌ Error al validar usuario:", error?.response?.status, error?.message);
-    return false; // 404 o error de red
+    console.error("❌ Error validating user:", error?.response?.status, error?.message);
+    return false; // 404 or network error
   }
 }

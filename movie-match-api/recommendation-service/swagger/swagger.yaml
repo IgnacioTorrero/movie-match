@@ -1,22 +1,22 @@
 openapi: 3.0.0
 info:
   title: Recommendation Service API
-  description: API para obtener recomendaciones de películas basadas en el historial del usuario.
+  description: API to get movie recommendations based on user history.
   version: 1.0.0
 servers:
   - url: http://localhost:3004/api
-    description: Servidor local para el recommendation-service
+    description: Local server for the recommendation-service
 paths:
   /recommendations:
     get:
-      summary: Obtener recomendaciones de películas
-      description: Devuelve una lista de películas recomendadas basadas en el historial y preferencias del usuario.
+      summary: Get movie recommendations
+      description: Returns a list of recommended movies based on the user's viewing history and preferences.
       operationId: getRecommendedMovies
       security:
         - BearerAuth: []
       responses:
         '200':
-          description: Lista de películas recomendadas
+          description: List of recommended movies
           content:
             application/json:
               schema:
@@ -43,9 +43,9 @@ paths:
                       type: string
                       example: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
         '400':
-          description: Usuario no autenticado o ID de usuario no proporcionado
+          description: Unauthenticated user or user ID not provided
         '500':
-          description: Error al obtener recomendaciones
+          description: Error getting recommendations
 
 components:
   securitySchemes:
