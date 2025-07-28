@@ -6,8 +6,8 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "target": "ES6",
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "types": ["jest", "node"]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.test.ts", "test"]
+  "include": ["src/**/*.ts", "src/test/**/*.ts"]
 }

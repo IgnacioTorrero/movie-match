@@ -7,7 +7,7 @@ servers:
   - url: http://localhost:3003/api
     description: Local server for the rating service
 paths:
-  /rate:
+  /ratings/rate:
     post:
       summary: Rate a movie
       description: Allows a user to rate a movie by providing its ID and a score.
