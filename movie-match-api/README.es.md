@@ -1,4 +1,4 @@
-# MovieMatch API
+# Movie Match API
 
 Este proyecto es una aplicación compuesta por microservicios en Node.js para la gestión de autenticación, películas, calificaciones y recomendaciones personalizadas, utilizando JWT para la autenticación, Swagger UI para la documentación, y Podman para el despliegue de los contenedores. La arquitectura está diseñada para ser escalable, desacoplada y profesional, ideal para entornos de producción modernos.
 
@@ -209,6 +209,11 @@ DELETE /api/recommendations/cache
 ```
 💡 Todos los endpoints, salvo /auth/register y /auth/login, requieren el token JWT en la cabecera Authorization.
 
+**Acceder desde el front-end**: 
+```json
+http://localhost:3005/auth/
+```
+
 ### 8) 🧪 Tests
 
 Este proyecto incluye pruebas unitarias y de integración utilizando **Jest** y **Supertest**, organizadas por microservicio. Cada test sigue buenas prácticas: separación de responsabilidades, mocks de dependencias, y validación de lógica de negocio.
@@ -308,3 +313,37 @@ Si deseás sugerir mejoras, abrir un issue o enviar un pull request, ¡bienvenid
 Este proyecto se distribuye bajo la licencia **MIT**. Podés utilizarlo, modificarlo y compartirlo libremente para fines personales o profesionales.
 
 ---
+## 🔐 Variables de entorno y configuración
+
+Las variables necesarias para la conexión a MySQL y JWT están definidas en `.env`.
+
+```properties
+DATABASE_URL="mysql://root:root@mysql:3306/proyecto_node"
+JWT_SECRET="a3rU8/*po0--1$"
+REDIS_URL="redis://redis:6379"
+```
+---
+
+## ☁️ Despliegue en Producción (EC2)
+
+> ⚠️ **Nota importante:**  
+> Esta documentación está orientada principalmente al uso **local** de la aplicación para facilitar el testing, el análisis del código y la ejecución de pruebas.
+
+Sin embargo, el proyecto ha sido **desplegado exitosamente en un entorno de producción real** utilizando:
+
+- **Instancia EC2** de AWS (Amazon Web Services)
+- **Contenedores Podman** `podman-compose-prod.yml`, `.env.prod` (corriendo en la nube)
+- **Builds optimizados** de frontend y backend
+- **Configuración de variables sensibles mediante `.env.production`**
+- **Exposición controlada de puertos** para frontend, microservicios y gateway
+- **Swagger UI funcional** para cada microservicio accediendo por IP pública
+
+Este despliegue tiene como objetivo **demostrar la capacidad profesional para ejecutar una arquitectura completa y funcional en la nube**, incluyendo:
+
+- Orquestación de múltiples microservicios en un servidor remoto
+- Manejo de volúmenes persistentes para bases de datos (MySQL)
+- Servir assets estáticos (React) desde el API Gateway
+- Exposición de endpoints seguros con JWT desde producción
+- Integración de Swagger para testing remoto
+
+> 🎯 Si estás evaluando este proyecto, podés solicitar acceso a una instancia de prueba ya desplegada, o revisar el script de despliegue remoto y estructura de archivos de producción.
