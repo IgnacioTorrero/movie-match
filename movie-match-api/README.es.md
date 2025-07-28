@@ -70,6 +70,12 @@ Este proyecto es una aplicación compuesta por microservicios en Node.js para la
 
 ---
 
+## 🧩 Diagrama de arquitectura
+
+![Diagrama de arquitectura](docs/arquitecture.png)
+
+---
+
 ## 📝 Módulo práctico
 
 ### 5) ¿Cómo montar la aplicación desde cero?
@@ -318,7 +324,7 @@ Este proyecto se distribuye bajo la licencia **MIT**. Podés utilizarlo, modific
 Las variables necesarias para la conexión a MySQL y JWT están definidas en `.env`.
 
 ```properties
-DATABASE_URL="mysql://root:root@mysql:3306/proyecto_node"
+DATABASE_URL="mysql://root:root@mysql:3306/movie-match"
 JWT_SECRET="a3rU8/*po0--1$"
 REDIS_URL="redis://redis:6379"
 ```
