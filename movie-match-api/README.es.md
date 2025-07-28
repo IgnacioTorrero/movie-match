@@ -72,7 +72,7 @@ Este proyecto es una aplicación compuesta por microservicios en Node.js para la
 
 ## 🧩 Diagrama de arquitectura
 
-![Diagrama de arquitectura](docs/arquitecture.png)
+![Diagrama de arquitectura](docs/architecture.png)
 
 ---
 
@@ -114,8 +114,8 @@ podman-compose build #Para buildear el proyecto después de un cambio
 El orden para levantar de cero sería:
 1) podman machine init
 2) podman machine start
-2) podman-compose build
-3) podman-compose up
+3) podman-compose build
+4) podman-compose up
 
 ### 6) ¿Cómo visualizar y testear Swagger UI?
 
