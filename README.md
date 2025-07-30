@@ -75,6 +75,7 @@ This project is a microservices-based application built with Node.js for managin
 ![Architecture diagram](docs/architecture.png)
 
 ---
+
 ## 📝 Practical Module
 
 ### 5) How to Set Up the Application from Scratch?
