@@ -72,7 +72,7 @@ This project is a microservices-based application built with Node.js for managin
 
 ## 🧩 Architecture diagram
 
-![Architecture diagram](docs/architecture.png)
+![Architecture diagram](movie-match/docs/architecture.png)
 
 ---
 ## 📝 Practical Module
